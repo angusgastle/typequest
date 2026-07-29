@@ -161,7 +161,7 @@ export function TypingTest({
 				className="rounded-[2rem] bg-white/70 backdrop-blur border-2 border-white p-6 md:p-8 min-h-[180px] flex items-center"
 				tabIndex={0}
 			>
-				<p className="font-display text-2xl md:text-4xl leading-relaxed tracking-wide">
+				<p className="font-display text-2xl md:text-4xl leading-relaxed tracking-wide min-w-0 break-words">
 					{prompt.split("").map((ch, i) => {
 						const isCurrent = i === currentIndex;
 						const isTyped = i < currentIndex;

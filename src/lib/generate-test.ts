@@ -73,7 +73,7 @@ export async function aiGenerateTest(level: number): Promise<TestContent> {
 	const lvl = difficultyForLevel(level);
 
 	const systemPrompt =
-		"You are a friendly storyteller for a kids' typing tutor. Generate a fun, age-appropriate typing adventure.";
+		"You are a friendly storyteller for a kids' typing tutor. Generate a fun, age-appropriate typing adventure. Always use Canadian spelling (e.g., colour, behaviour, centre, honour, favourite, neighbour, metre, litre).";
 
 	const userPrompt = `Generate a fun, kid-friendly typing adventure for typing level ${lvl}.
 - Level 1: one short simple sentence, lowercase, no punctuation.
@@ -82,7 +82,7 @@ export async function aiGenerateTest(level: number): Promise<TestContent> {
 - Level 4: a paragraph with full punctuation, capitals, and numbers.
 - Level 5: multi-paragraph text with complex sentences, symbols (! ? ; '), and varied punctuation.
 
-Keep it encouraging and age-appropriate. Do not include emoji inside the text. Respond ONLY with valid JSON, no markdown fences, in this exact shape:
+Use Canadian spelling (colour, behaviour, centre, honour, favourite, neighbour, metre, litre, etc.). Keep it encouraging and age-appropriate. Do not include emoji inside the text. Respond ONLY with valid JSON, no markdown fences, in this exact shape:
 {"title": string, "theme": string, "prompt": string}`;
 
 	try {
