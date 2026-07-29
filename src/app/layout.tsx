@@ -15,6 +15,7 @@ const bodyFont = Nunito({
 });
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://typequest.phosphene.ca"),
 	title: "Type Quest — Typing Adventures for Kids",
 	description:
 		"Embark on typing adventures! Learn to type fast and accurately with fun, AI-generated quests.",
