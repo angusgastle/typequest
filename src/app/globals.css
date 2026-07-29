@@ -1,73 +1,90 @@
 @import "tailwindcss";
 
 @theme {
-  --color-coral: #ff6b6b;
-  --color-coral-light: #ff8e8e;
-  --color-sunny: #ffd93d;
-  --color-teal: #4ecdc4;
-  --color-grape: #a78bfa;
-  --color-berry: #ff5a8a;
-  --color-leaf: #6bcb77;
-  --color-cream: #fff8f0;
-  --color-sky: #74c7ec;
-  --color-ink: #2d2a4a;
+	--color-coral: #ff6b6b;
+	--color-coral-light: #ff8e8e;
+	--color-sunny: #ffd93d;
+	--color-teal: #4ecdc4;
+	--color-grape: #a78bfa;
+	--color-berry: #ff5a8a;
+	--color-leaf: #6bcb77;
+	--color-cream: #fff8f0;
+	--color-sky: #74c7ec;
+	--color-ink: #2d2a4a;
 
-  --font-display: "Baloo 2", "Fredoka", system-ui, sans-serif;
-  --font-body: "Nunito", system-ui, sans-serif;
+	--font-display: "Baloo 2", "Fredoka", system-ui, sans-serif;
+	--font-body: "Nunito", system-ui, sans-serif;
 
-  --radius-blobby: 1.75rem;
+	--radius-blobby: 1.75rem;
 }
 
 @layer base {
-  html {
-    font-family: var(--font-body);
-  }
-  body {
-    background: linear-gradient(135deg, #fff8f0 0%, #ffeef0 50%, #e8fbff 100%);
-    background-attachment: fixed;
-    color: var(--color-ink);
-    min-height: 100vh;
-  }
+	html {
+		font-family: var(--font-body);
+	}
+	body {
+		background: linear-gradient(135deg, #fff8f0 0%, #ffeef0 50%, #e8fbff 100%);
+		background-attachment: fixed;
+		color: var(--color-ink);
+		min-height: 100vh;
+	}
 }
 
 @layer utilities {
-  .font-display {
-    font-family: var(--font-display);
-  }
+	.font-display {
+		font-family: var(--font-display);
+	}
 }
 
 /* Wobbly playful bounce for celebratory moments */
 @keyframes wobble {
-  0% { transform: rotate(-3deg); }
-  50% { transform: rotate(3deg); }
-  100% { transform: rotate(0deg); }
+	0% {
+		transform: rotate(-3deg);
+	}
+	50% {
+		transform: rotate(3deg);
+	}
+	100% {
+		transform: rotate(0deg);
+	}
 }
 .wobble {
-  animation: wobble 0.5s ease-in-out infinite;
+	animation: wobble 0.5s ease-in-out infinite;
 }
 
 /* Floating blobs in background */
 @keyframes float-slow {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-20px) translateX(10px); }
+	0%,
+	100% {
+		transform: translateY(0) translateX(0);
+	}
+	50% {
+		transform: translateY(-20px) translateX(10px);
+	}
 }
 .float-slow {
-  animation: float-slow 6s ease-in-out infinite;
+	animation: float-slow 6s ease-in-out infinite;
 }
 
 @keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.25); }
-  100% { transform: scale(1); }
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.25);
+	}
+	100% {
+		transform: scale(1);
+	}
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+	width: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #ffd93d;
-  border-radius: 999px;
+	background: #ffd93d;
+	border-radius: 999px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+	background: transparent;
 }

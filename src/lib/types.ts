@@ -1,58 +1,58 @@
 export interface Kid {
-  id: string;
-  first_name: string;
-  last_name: string | null;
-  nickname: string | null;
-  age: number | null;
-  email: string | null;
-  wpm: number;
-  tests_complete: number;
-  level: number;
-  cumulative_score: number;
-  created: string;
-  last_updated: string;
+	id: string;
+	first_name: string;
+	last_name: string | null;
+	nickname: string | null;
+	age: number | null;
+	email: string | null;
+	wpm: number;
+	tests_complete: number;
+	level: number;
+	cumulative_score: number;
+	created: string;
+	last_updated: string;
 }
 
 export interface TestRecord {
-  id: string;
-  kid_id: string;
-  test_content: TestContent;
-  difficulty: number;
-  errors: number;
-  score: number;
-  time_to_complete: number; // seconds
-  created: string;
-  last_updated: string;
+	id: string;
+	kid_id: string;
+	test_content: TestContent;
+	difficulty: number;
+	errors: number;
+	score: number;
+	time_to_complete: number; // seconds
+	created: string;
+	last_updated: string;
 }
 
 export interface TestContent {
-  prompt: string;          // the text the kid types
-  theme: string;           // adventure theme name
-  title: string;           // adventure title
+	prompt: string; // the text the kid types
+	theme: string; // adventure theme name
+	title: string; // adventure title
 }
 
 export interface TestResult {
-  accuracy: number;     // 0-100
-  wpm: number;
-  errors: number;
-  score: number;
-  timeToComplete: number;
+	accuracy: number; // 0-100
+	wpm: number;
+	errors: number;
+	score: number;
+	timeToComplete: number;
 }
 
 export interface LeaderboardRow {
-  kid_id: string;
-  nickname: string;
-  first_name: string;
-  avatar: string;
-  wpm: number;
-  accuracy: number;
-  score: number;
-  rank: number;
+	kid_id: string;
+	nickname: string;
+	first_name: string;
+	avatar: string;
+	wpm: number;
+	accuracy: number;
+	score: number;
+	rank: number;
 }
 
 export interface Session {
-  kidId: string;
-  name: string;
-  level: number;
-  cumulativeScore: number;
+	kidId: string;
+	name: string;
+	level: number;
+	cumulativeScore: number;
 }
