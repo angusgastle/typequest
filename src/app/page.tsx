@@ -6,6 +6,7 @@ import { useState } from "react";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
 import { Button } from "@/components/ui";
 import { isDemo, login, setSession } from "@/lib/data";
+import { toTitleCase } from "@/lib/utils";
 
 export default function LoginPage() {
 	const router = useRouter();
@@ -63,6 +64,7 @@ export default function LoginPage() {
 							<input
 								value={name}
 								onChange={(e) => setName(e.target.value)}
+								onBlur={() => setName(toTitleCase(name))}
 								placeholder="Olive"
 								autoComplete="off"
 								className="w-full rounded-2xl border-2 border-white bg-cream/60 px-4 py-3 font-display text-lg outline-none focus:border-coral focus:ring-4 focus:ring-coral/20 transition"

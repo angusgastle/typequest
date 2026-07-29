@@ -85,15 +85,11 @@ function charToKey(char: string | null): KeyDef | null {
 export function Keyboard({ nextChar, pressedChar, state }: KeyboardProps) {
 	const targetKey = charToKey(nextChar);
 	const pressedKey = charToKey(pressedChar);
-
 	const activeFinger = targetKey?.finger ?? null;
 
 	return (
 		<div className="w-full">
 			<div className="mx-auto max-w-3xl">
-				{/* Outlined hands above the home row */}
-				<Hands activeFinger={activeFinger} />
-
 				<div className="rounded-3xl bg-gradient-to-b from-ink/5 to-white/40 p-3 md:p-4 border-2 border-white shadow-inner">
 					<div className="space-y-2">
 						{ROWS.map((row, i) => (
@@ -167,129 +163,5 @@ export function Keyboard({ nextChar, pressedChar, state }: KeyboardProps) {
 				</div>
 			</div>
 		</div>
-	);
-}
-
-/** Stylized outlined hands sitting over the home row, showing proper position. */
-function Hands({ activeFinger }: { activeFinger: string | null }) {
-	return (
-		<div className="relative mx-auto mb-[-12px] w-full max-w-3xl px-4">
-			<svg
-				viewBox="0 0 600 120"
-				className="w-full"
-				role="img"
-				aria-label="Hand position guide"
-			>
-				<defs>
-					<linearGradient id="handL" x1="0" y1="0" x2="1" y2="1">
-						<stop offset="0%" stopColor="#ff8e8e" />
-						<stop offset="100%" stopColor="#ff6b6b" />
-					</linearGradient>
-					<linearGradient id="handR" x1="1" y1="0" x2="0" y2="1">
-						<stop offset="0%" stopColor="#3fd4cb" />
-						<stop offset="100%" stopColor="#4ecdc4" />
-					</linearGradient>
-				</defs>
-
-				{/* Left hand */}
-				<g
-					transform="translate(40,10)"
-					style={{
-						transformOrigin: "left center",
-						transform:
-							activeFinger && activeFinger.startsWith("l")
-								? "translate(40px,10px) translateY(-4px)"
-								: "translate(40px,10px)",
-						transition: "transform 0.15s ease-out",
-					}}
-				>
-					<ellipse
-						cx="80"
-						cy="70"
-						rx="100"
-						ry="40"
-						fill="url(#handL)"
-						opacity="0.25"
-					/>
-					<path
-						d="M0,80 Q0,40 40,40 L120,40 Q160,40 160,80 L160,110 L0,110 Z"
-						fill="url(#handL)"
-						opacity="0.45"
-						stroke="#c44545"
-						strokeWidth="3"
-						strokeLinejoin="round"
-						strokeDasharray="6 5"
-					/>
-					{["lp", "lr", "lm", "li"].map((f, i) => (
-						<FingerPip
-							key={f}
-							cx={20 + i * 35}
-							cy={45}
-							active={activeFinger === f}
-						/>
-					))}
-				</g>
-
-				{/* Right hand */}
-				<g
-					transform="translate(300,10)"
-					style={{
-						transform:
-							activeFinger && activeFinger.startsWith("r")
-								? "translate(300px,10px) translateY(-4px)"
-								: "translate(300px,10px)",
-						transition: "transform 0.15s ease-out",
-					}}
-				>
-					<ellipse
-						cx="80"
-						cy="70"
-						rx="100"
-						ry="40"
-						fill="url(#handR)"
-						opacity="0.25"
-					/>
-					<path
-						d="M0,80 Q0,40 40,40 L120,40 Q160,40 160,80 L160,110 L0,110 Z"
-						fill="url(#handR)"
-						opacity="0.45"
-						stroke="#2c8a82"
-						strokeWidth="3"
-						strokeLinejoin="round"
-						strokeDasharray="6 5"
-					/>
-					{["ri", "rm", "rr", "rp"].map((f, i) => (
-						<FingerPip
-							key={f}
-							cx={20 + i * 35}
-							cy={45}
-							active={activeFinger === f}
-						/>
-					))}
-				</g>
-			</svg>
-		</div>
-	);
-}
-
-function FingerPip({
-	cx,
-	cy,
-	active,
-}: {
-	cx: number;
-	cy: number;
-	active: boolean;
-}) {
-	return (
-		<motion.circle
-			cx={cx}
-			cy={cy}
-			r={active ? 7 : 4}
-			animate={{ opacity: active ? 1 : 0.5 }}
-			fill="white"
-			stroke={active ? "#2d2a4a" : "none"}
-			strokeWidth={2}
-		/>
 	);
 }

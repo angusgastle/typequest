@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getSession } from "@/lib/data";
+import { useEffect, useRef, useState } from "react";
+import { getSession, setSession } from "@/lib/data";
 import type { Session } from "@/lib/types";
 import { avatarFor, cn, getTier } from "@/lib/utils";
 
@@ -18,6 +18,20 @@ export function NavBar() {
 	const pathname = usePathname();
 	const [session, setSession] = useState<Session | null>(null);
 	const [mounted, setMounted] = useState(false);
+	const [menuOpen, setMenuOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	// Close menu on outside click
+	useEffect(() => {
+		if (!menuOpen) return;
+		const handler = (e: MouseEvent) => {
+			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+				setMenuOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handler);
+		return () => document.removeEventListener("mousedown", handler);
+	}, [menuOpen]);
 
 	useEffect(() => {
 		setMounted(true);
@@ -30,6 +44,12 @@ export function NavBar() {
 			window.removeEventListener("tq-session-changed", update);
 		};
 	}, []);
+
+	const logout = () => {
+		setSession(null);
+		window.dispatchEvent(new Event("tq-session-changed"));
+		setMenuOpen(false);
+	};
 
 	if (!mounted) return <nav className="h-20" />;
 
@@ -93,21 +113,40 @@ export function NavBar() {
 						</motion.div>
 					)}
 					{session ? (
-						<Link
-							href="/profile"
-							className="flex items-center gap-2 rounded-full bg-white border-2 border-coral/30 pl-1 pr-3 py-1 hover:border-coral transition-colors"
-						>
-							<span
-								className="grid h-9 w-9 place-items-center rounded-full text-xl"
-								style={{ backgroundColor: session.avatarColor }}
+						<div className="relative" ref={menuRef}>
+							<button
+								onClick={() => setMenuOpen((o) => !o)}
+								className="flex items-center gap-2 rounded-full bg-white border-2 border-coral/30 pl-1 pr-3 py-1 hover:border-coral transition-colors"
 							>
-								{displayAvatar}
-							</span>
-							<span className="hidden sm:inline font-display font-bold text-sm">
-								{session.name} ·{" "}
-								{tier ? `${tier.emoji} ${tier.name} ${tier.subLevel}` : ""}
-							</span>
-						</Link>
+								<span
+									className="grid h-9 w-9 place-items-center rounded-full text-xl"
+									style={{ backgroundColor: session.avatarColor }}
+								>
+									{displayAvatar}
+								</span>
+								<span className="hidden sm:inline font-display font-bold text-sm">
+									{session.name} ·{" "}
+									{tier ? `${tier.emoji} ${tier.name} ${tier.subLevel}` : ""}
+								</span>
+							</button>
+							{menuOpen && (
+								<div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white border-2 border-white shadow-lg overflow-hidden z-50">
+									<Link
+										href="/profile"
+										onClick={() => setMenuOpen(false)}
+										className="flex items-center gap-2 px-4 py-2.5 font-display font-bold text-sm hover:bg-sunny/30 transition-colors"
+									>
+										<span>👤</span> Profile
+									</Link>
+									<button
+										onClick={logout}
+										className="flex items-center gap-2 w-full px-4 py-2.5 font-display font-bold text-sm text-red-500 hover:bg-red-50 transition-colors"
+									>
+										<span>👋</span> Log Out
+									</button>
+								</div>
+							)}
+						</div>
 					) : (
 						<Link
 							href="/"

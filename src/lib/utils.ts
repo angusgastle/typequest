@@ -6,6 +6,37 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // ---------------------------------------------------------------------------
+// Text formatting
+// ---------------------------------------------------------------------------
+
+/** Convert a string to Title Case (each word capitalized). */
+export function toTitleCase(str: string): string {
+	return str
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean)
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(" ");
+}
+
+/** Convert a string to Sentence case (first letter capitalized, rest lowercase). */
+export function toSentenceCase(str: string): string {
+	const trimmed = str.trim();
+	if (!trimmed) return "";
+	return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+}
+
+/** Convert a string to UPPER CASE. */
+export function toUpperCase(str: string): string {
+	return str.trim().toUpperCase();
+}
+
+/** Convert a string to lower case. */
+export function toLowerCase(str: string): string {
+	return str.trim().toLowerCase();
+}
+
+// ---------------------------------------------------------------------------
 // Avatars
 // ---------------------------------------------------------------------------
 
