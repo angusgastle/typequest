@@ -13,6 +13,10 @@ create table if not exists public.kids (
   tests_complete  integer     not null default 0,
   level           integer     not null default 1,
   cumulative_score integer    not null default 0,
+  avatar          text        default null,   -- selected emoji avatar
+  avatar_color    text        default '#ff6b6b', -- avatar circle background color
+  streak          integer     not null default 0, -- consecutive daily quiz streak
+  last_quiz_date  date        default null,   -- last date a quiz was completed
   pin_hash        text        not null,       -- 4-digit PIN (demo hashing only)
   created         timestamptz not null default now(),
   last_updated    timestamptz not null default now()
@@ -30,6 +34,7 @@ create table if not exists public.tests (
   errors          integer not null default 0,
   score           integer not null default 0,
   time_to_complete integer not null default 0, -- seconds
+  backspaces      integer not null default 0, -- backspace key presses
   created         timestamptz not null default now(),
   last_updated    timestamptz not null default now()
 );

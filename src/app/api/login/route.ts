@@ -35,6 +35,10 @@ export async function POST(req: Request) {
 			name: existing.first_name,
 			level: existing.level,
 			cumulativeScore: existing.cumulative_score,
+			avatar: existing.avatar ?? null,
+			avatarColor: existing.avatar_color ?? "#ff6b6b",
+			streak: existing.streak ?? 0,
+			lastQuizDate: existing.last_quiz_date ?? null,
 		});
 	}
 
@@ -48,6 +52,10 @@ export async function POST(req: Request) {
 			tests_complete: 0,
 			level: 1,
 			cumulative_score: 0,
+			avatar: null,
+			avatar_color: "#ff6b6b",
+			streak: 0,
+			last_quiz_date: null,
 		})
 		.select()
 		.single();
@@ -62,5 +70,9 @@ export async function POST(req: Request) {
 		name: created.first_name,
 		level: created.level,
 		cumulativeScore: created.cumulative_score,
+		avatar: created.avatar ?? null,
+		avatarColor: created.avatar_color ?? "#ff6b6b",
+		streak: created.streak ?? 0,
+		lastQuizDate: created.last_quiz_date ?? null,
 	});
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
-import { login, setSession, isDemo } from "@/lib/data";
+import { Button } from "@/components/ui";
+import { isDemo, login, setSession } from "@/lib/data";
 
 export default function LoginPage() {
 	const router = useRouter();

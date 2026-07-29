@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import {
 	aiGenerateTest,
-	localGenerateTest,
 	isAiConfigured,
+	localGenerateTest,
 } from "@/lib/generate-test";
 
 export async function POST(req: Request) {

@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 
 const COLORS = [
 	"#ff6b6b",

@@ -17,7 +17,18 @@ const THEMES = [
 	"The Sleepy Dragon",
 	"The Singing River",
 	"The Marshmallow Maze",
+	"The Crystal Lighthouse",
+	"The Shadow Garden",
 ];
+
+/** Map absolute level (1-30) to a 5-tier difficulty index. */
+function difficultyForLevel(level: number): number {
+	if (level <= 2) return 1;
+	if (level <= 4) return 2;
+	if (level <= 7) return 3;
+	if (level <= 11) return 4;
+	return 5;
+}
 
 const TEMPLATES: Record<number, string[]> = {
 	1: [
@@ -34,10 +45,18 @@ const TEMPLATES: Record<number, string[]> = {
 		"Deep in the whispering cavern, a tiny dragon slept on a pile of shiny coins, dreaming of flying through the clouds.",
 		"The cloud castle floated above the mountains. Its gates were made of light, and the wind sang songs through the towers.",
 	],
+	4: [
+		"The explorer packed her bag with a compass, 3 water bottles, and a worn map. She stepped into the cave, listening to water drip far below. Day 14 of the expedition had begun.",
+		"Captain Felix steered the ship through stormy seas, checking the radar for islands. The crew of 7 worked the ropes while rain hammered the deck. They had 200 miles left to sail.",
+	],
+	5: [
+		'The laboratory hummed with energy as Dr. Kim adjusted the dials. "Subject #47 is responding well," she noted, writing 87.3% on her clipboard. The machine\'s output had increased by 12% since Monday; a breakthrough! She smiled & wondered: could this change everything?\n\nMeanwhile, across campus, her colleague Prof. Reyes was reaching the opposite conclusion. His data showed a 5% decline, not growth. "We need to compare notes," he muttered, dialing her extension.',
+		"The ancient clock tower struck midnight. Its 12 chimes echoed through the empty streets, each one louder than the last. Below, in the abandoned bookshop on 5th Avenue, a single light flickered. Mrs. Patel, the keeper of secrets, turned the brass key in lock #7. The door creaked open; behind it lay a staircase descending into darkness. 'Welcome back,' whispered the shadows. 'We have been waiting for 100 years.'",
+	],
 };
 
 export function localGenerateTest(level: number): TestContent {
-	const lvl = Math.max(1, Math.min(3, Math.ceil(level / 2) || 1));
+	const lvl = difficultyForLevel(level);
 	const pool = TEMPLATES[lvl];
 	const prompt = pool[Math.floor(Math.random() * pool.length)];
 	const theme = THEMES[Math.floor(Math.random() * THEMES.length)];
@@ -51,15 +70,17 @@ export async function aiGenerateTest(level: number): Promise<TestContent> {
 	}
 
 	const client = new Anthropic({ apiKey });
-	const lvl = Math.max(1, Math.min(3, Math.ceil(level / 2) || 1));
+	const lvl = difficultyForLevel(level);
 
 	const systemPrompt =
 		"You are a friendly storyteller for a kids' typing tutor. Generate a fun, age-appropriate typing adventure.";
 
 	const userPrompt = `Generate a fun, kid-friendly typing adventure for typing level ${lvl}.
 - Level 1: one short simple sentence, lowercase, no punctuation.
-- Level 2: two sentences with punctuation, still simple words.
-- Level 3: a richer 2-3 sentence paragraph with punctuation.
+- Level 2: two sentences with basic punctuation, still simple words.
+- Level 3: a richer 2-3 sentence paragraph with punctuation and some capitals.
+- Level 4: a paragraph with full punctuation, capitals, and numbers.
+- Level 5: multi-paragraph text with complex sentences, symbols (! ? ; '), and varied punctuation.
 
 Keep it encouraging and age-appropriate. Do not include emoji inside the text. Respond ONLY with valid JSON, no markdown fences, in this exact shape:
 {"title": string, "theme": string, "prompt": string}`;
@@ -67,7 +88,7 @@ Keep it encouraging and age-appropriate. Do not include emoji inside the text. R
 	try {
 		const response = await client.messages.create({
 			model: HAIKU_MODEL,
-			max_tokens: 300,
+			max_tokens: 400,
 			system: systemPrompt,
 			messages: [{ role: "user", content: userPrompt }],
 		});
@@ -91,3 +112,5 @@ Keep it encouraging and age-appropriate. Do not include emoji inside the text. R
 export function isAiConfigured(): boolean {
 	return !!process.env.ANTHROPIC_API_KEY;
 }
+
+export { difficultyForLevel };

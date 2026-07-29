@@ -1,14 +1,16 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import type { TestContent, TestResult } from "@/lib/types";
+import { getStreakMultiplier } from "@/lib/utils";
 import { Keyboard } from "./Keyboard";
 import { Button } from "./ui";
-import type { TestContent, TestResult } from "@/lib/types";
 
 interface TypingTestProps {
 	content: TestContent;
 	level: number;
+	streak: number;
 	onComplete: (result: TestResult) => void;
 	onExit: () => void;
 }
@@ -18,6 +20,7 @@ type Status = "idle" | "typing" | "done";
 export function TypingTest({
 	content,
 	level,
+	streak,
 	onComplete,
 	onExit,
 }: TypingTestProps) {
@@ -26,6 +29,7 @@ export function TypingTest({
 	const [status, setStatus] = useState<Status>("idle");
 	const [lastState, setLastState] = useState<"correct" | "wrong" | null>(null);
 	const [pressedChar, setPressedChar] = useState<string | null>(null);
+	const [backspaces, setBackspaces] = useState(0);
 	const [timeLeft, setTimeLeft] = useState(0);
 	const startTimeRef = useRef<number | null>(null);
 	const charsRef = useRef<HTMLSpanElement[]>([]);
@@ -69,6 +73,7 @@ export function TypingTest({
 				e.preventDefault();
 				setTyped((t) => t.slice(0, -1));
 				setLastState(null);
+				setBackspaces((b) => b + 1);
 				return;
 			}
 
@@ -104,9 +109,12 @@ export function TypingTest({
 			: 0;
 		const minutes = Math.max(elapsed, 1) / 60;
 		const wpm = Math.max(1, Math.round(correct / 5 / minutes));
+		const streakMultiplier = getStreakMultiplier(streak);
 		const score = Math.max(
 			0,
-			Math.round(wpm * (accuracy / 100) * 10) + level * 10,
+			Math.floor(
+				(10 + wpm + Math.round(accuracy * 0.5) + level * 2) * streakMultiplier,
+			),
 		);
 		const result: TestResult = {
 			accuracy,
@@ -114,9 +122,10 @@ export function TypingTest({
 			errors,
 			score,
 			timeToComplete: Math.round(elapsed),
+			backspaces,
 		};
 		onComplete(result);
-	}, [typed, prompt, level, onComplete]);
+	}, [typed, prompt, level, streak, backspaces, onComplete]);
 
 	useEffect(() => {
 		if (status === "typing" && typed.length >= prompt.length) {

@@ -1,10 +1,10 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { NavBar } from "@/components/NavBar";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
-import { getSession, getLeaderboard } from "@/lib/data";
+import { NavBar } from "@/components/NavBar";
+import { getLeaderboard, getSession } from "@/lib/data";
 import type { LeaderboardRow, Session } from "@/lib/types";
 import { avatarFor } from "@/lib/utils";
 

@@ -54,7 +54,7 @@ export async function GET(req: Request) {
 			kid_id: k.id,
 			nickname: k.nickname || k.first_name,
 			first_name: k.first_name,
-			avatar: avatarFor(k.first_name),
+			avatar: k.avatar || avatarFor(k.first_name),
 			wpm,
 			accuracy,
 			score: s ? s.score : 0,

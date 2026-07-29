@@ -9,6 +9,10 @@ export interface Kid {
 	tests_complete: number;
 	level: number;
 	cumulative_score: number;
+	avatar: string | null;
+	avatar_color: string;
+	streak: number;
+	last_quiz_date: string | null;
 	created: string;
 	last_updated: string;
 }
@@ -37,6 +41,7 @@ export interface TestResult {
 	errors: number;
 	score: number;
 	timeToComplete: number;
+	backspaces: number;
 }
 
 export interface LeaderboardRow {
@@ -55,4 +60,8 @@ export interface Session {
 	name: string;
 	level: number;
 	cumulativeScore: number;
+	avatar: string | null;
+	avatarColor: string;
+	streak: number;
+	lastQuizDate: string | null;
 }

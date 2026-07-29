@@ -1,16 +1,17 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { getSession } from "@/lib/data";
 import type { Session } from "@/lib/types";
+import { avatarFor, cn, getTier } from "@/lib/utils";
 
 const links = [
 	{ href: "/adventure", label: "Adventure", emoji: "🗺️" },
 	{ href: "/leaderboard", label: "Leaderboard", emoji: "🏆" },
+	{ href: "/profile", label: "Profile", emoji: "👤" },
 ];
 
 export function NavBar() {
@@ -31,6 +32,11 @@ export function NavBar() {
 	}, []);
 
 	if (!mounted) return <nav className="h-20" />;
+
+	const tier = session ? getTier(session.cumulativeScore) : null;
+	const displayAvatar = session
+		? session.avatar || avatarFor(session.name)
+		: null;
 
 	return (
 		<nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b-2 border-white shadow-sm">
@@ -88,14 +94,18 @@ export function NavBar() {
 					)}
 					{session ? (
 						<Link
-							href="/adventure"
+							href="/profile"
 							className="flex items-center gap-2 rounded-full bg-white border-2 border-coral/30 pl-1 pr-3 py-1 hover:border-coral transition-colors"
 						>
-							<span className="grid h-9 w-9 place-items-center rounded-full bg-coral/20 text-xl">
-								{session.name[0]?.toUpperCase() ?? "?"}
+							<span
+								className="grid h-9 w-9 place-items-center rounded-full text-xl"
+								style={{ backgroundColor: session.avatarColor }}
+							>
+								{displayAvatar}
 							</span>
 							<span className="hidden sm:inline font-display font-bold text-sm">
-								{session.name} · L{session.level}
+								{session.name} ·{" "}
+								{tier ? `${tier.emoji} ${tier.name} ${tier.subLevel}` : ""}
 							</span>
 						</Link>
 					) : (

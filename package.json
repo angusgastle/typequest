@@ -8,7 +8,8 @@
 		"start": "next start",
 		"lint": "biome lint",
 		"format": "biome format --write",
-		"check": "biome check"
+		"check": "biome check",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.115.0",

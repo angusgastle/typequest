@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { NavBar } from "@/components/NavBar";
+import { useEffect, useState } from "react";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
-import { Button } from "@/components/ui";
-import { TypingTest } from "@/components/TypingTest";
 import { Confetti } from "@/components/Confetti";
+import { Keyboard } from "@/components/Keyboard";
+import { NavBar } from "@/components/NavBar";
+import { TypingTest } from "@/components/TypingTest";
+import { Button } from "@/components/ui";
 import { generateTest, getSession, setSession, submitTest } from "@/lib/data";
-import type { TestContent, TestResult, Session } from "@/lib/types";
+import type { Session, TestContent, TestResult } from "@/lib/types";
+import { getTier } from "@/lib/utils";
 
 type Phase = "intro" | "generating" | "playing" | "result";
 
@@ -86,7 +88,11 @@ export default function AdventurePage() {
 						>
 							<motion.div
 								animate={{ rotate: 360 }}
-								transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+								transition={{
+									duration: 1.5,
+									repeat: Infinity,
+									ease: "linear",
+								}}
 								className="text-6xl mb-4"
 							>
 								🗺️
@@ -105,6 +111,7 @@ export default function AdventurePage() {
 							<TypingTest
 								content={content}
 								level={session ? session.level : 1}
+								streak={session ? session.streak : 0}
 								onComplete={handleComplete}
 								onExit={() => setPhase("intro")}
 							/>
@@ -136,6 +143,7 @@ function Intro({
 	session: Session | null;
 	error: string | null;
 }) {
+	const tier = session ? getTier(session.cumulativeScore) : null;
 	return (
 		<div className="grid place-items-center py-16 text-center">
 			<motion.div
@@ -155,7 +163,7 @@ function Intro({
 			</p>
 			<div className="mt-4 flex gap-2 text-sm font-display font-bold">
 				<span className="rounded-full bg-grape/20 px-3 py-1">
-					Level {session?.level}
+					{tier ? `${tier.emoji} ${tier.name} ${tier.subLevel}` : "Level 1"}
 				</span>
 				<span className="rounded-full bg-sunny/40 px-3 py-1">
 					⭐ {session?.cumulativeScore.toLocaleString()} points
@@ -170,6 +178,14 @@ function Intro({
 			<p className="mt-6 text-sm text-ink/40 font-display">
 				Tip: keep your fingers on the home row (A S D F J K L ;)
 			</p>
+
+			{/* Keyboard preview — decorative, shows finger-color guides */}
+			<div className="mt-8 w-full max-w-3xl mx-auto opacity-70 pointer-events-none select-none">
+				<p className="text-xs text-ink/40 font-display mb-2">
+					Your keyboard guide
+				</p>
+				<Keyboard nextChar={null} pressedChar={null} state={null} />
+			</div>
 		</div>
 	);
 }
@@ -195,7 +211,7 @@ function ResultScreen({
 				<h1 className="font-display text-5xl font-extrabold">
 					{result.score > 0 ? "🎉 You did it!" : "Nice try!"}
 				</h1>
-				<div className="mt-6 grid grid-cols-2 gap-3">
+				<div className="mt-6 grid grid-cols-3 gap-3">
 					<Stat
 						label="⭐ Score"
 						value={`+${result.score}`}
@@ -215,6 +231,16 @@ function ResultScreen({
 						label="❌ Errors"
 						value={`${result.errors}`}
 						color="bg-coral/30"
+					/>
+					<Stat
+						label="⏱️ Time"
+						value={`${result.timeToComplete}s`}
+						color="bg-sky/30"
+					/>
+					<Stat
+						label="⌫ Backspaces"
+						value={`${result.backspaces}`}
+						color="bg-ink/10"
 					/>
 				</div>
 				<div className="mt-8 flex justify-center gap-3">
