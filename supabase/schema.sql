@@ -13,8 +13,11 @@ create table if not exists public.kids (
   tests_complete  integer     not null default 0,
   level           integer     not null default 1,
   cumulative_score integer    not null default 0,
-  avatar          text        default null,   -- selected emoji avatar
-  avatar_color    text        default '#ff6b6b', -- avatar circle background color
+  avatar          text        default null,   -- selected emoji avatar (legacy)
+  avatar_color    text        default '#ff6b6b', -- avatar circle background color (legacy)
+  coins           integer     not null default 0, -- spendable cosmetic currency
+  equipped        jsonb       not null default '{}', -- e.g. {"base":"boy","hat":"wizard-hat","outfit":"vest","weapon":"sword"}
+  owned_items     text[]      not null default '{}', -- array of owned item ids
   streak          integer     not null default 0, -- consecutive daily quiz streak
   last_quiz_date  date        default null,   -- last date a quiz was completed
   pin_hash        text        not null,       -- 4-digit PIN (demo hashing only)
@@ -42,6 +45,28 @@ create table if not exists public.tests (
 create index if not exists tests_kid_id_idx on public.tests (kid_id);
 create index if not exists tests_created_idx on public.tests (created);
 
+-- Reusable adventure pool (generated/template content for reuse across kids)
+create table if not exists public.adventures (
+  id              uuid primary key default gen_random_uuid(),
+  theme           text        not null,
+  title           text        not null,
+  prompt          text        not null,
+  difficulty      integer     not null default 1,
+  created         timestamptz not null default now()
+);
+
+create index if not exists adventures_difficulty_idx on public.adventures (difficulty);
+
+-- Track which adventures a kid has already seen (to avoid repeats)
+create table if not exists public.kid_seen_adventures (
+  kid_id          uuid        not null references public.kids(id) on delete cascade,
+  adventure_id    uuid        not null references public.adventures(id) on delete cascade,
+  seen_at         timestamptz not null default now(),
+  unique(kid_id, adventure_id)
+);
+
+create index if not exists kid_seen_adventures_kid_id_idx on public.kid_seen_adventures (kid_id);
+
 -- Updated timestamp trigger
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
@@ -64,6 +89,8 @@ create trigger trg_tests_touch
 -- Row Level Security
 alter table public.kids enable row level security;
 alter table public.tests enable row level security;
+alter table public.adventures enable row level security;
+alter table public.kid_seen_adventures enable row level security;
 
 -- Demo policy: anon key can read/write. Tighten for production.
 create policy "kids_public_read" on public.kids for select using (true);
@@ -73,3 +100,9 @@ create policy "kids_public_update" on public.kids for update using (true);
 create policy "tests_public_read" on public.tests for select using (true);
 create policy "tests_public_insert" on public.tests for insert with check (true);
 create policy "tests_public_update" on public.tests for update using (true);
+
+create policy "adventures_public_read" on public.adventures for select using (true);
+create policy "adventures_public_insert" on public.adventures for insert with check (true);
+
+create policy "kid_seen_adventures_public_read" on public.kid_seen_adventures for select using (true);
+create policy "kid_seen_adventures_public_insert" on public.kid_seen_adventures for insert with check (true);

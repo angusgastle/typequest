@@ -7,6 +7,13 @@ import { getStreakMultiplier } from "@/lib/utils";
 import { Keyboard } from "./Keyboard";
 import { Button } from "./ui";
 
+const pulseKeyframes = `
+	@keyframes pulse {
+		0%, 100% { opacity: 0.4; }
+		50% { opacity: 1; }
+	}
+`;
+
 interface TypingTestProps {
 	content: TestContent;
 	level: number;
@@ -143,10 +150,42 @@ export function TypingTest({
 	const elapsed = duration - timeLeft;
 	const ringPct = timeLeft / duration;
 
+	// Auto-scroll the prompt to keep the current character visible
+	useEffect(() => {
+		if (status === "typing" && charsRef.current[currentIndex]) {
+			const el = charsRef.current[currentIndex];
+			setTimeout(() => {
+				el.scrollIntoView({
+					behavior: "smooth",
+					block: "center",
+				});
+			}, 0);
+		}
+	}, [currentIndex, status]);
+
+	// Parse prompt into words and spaces to prevent mid-word splitting
+	const promptWords = useMemo(() => {
+		const words: Array<{ text: string; isSpace: boolean }> = [];
+		let current = "";
+		for (const ch of prompt) {
+			if (ch === " ") {
+				if (current) {
+					words.push({ text: current, isSpace: false });
+					current = "";
+				}
+				words.push({ text: " ", isSpace: true });
+			} else {
+				current += ch;
+			}
+		}
+		if (current) words.push({ text: current, isSpace: false });
+		return words;
+	}, [prompt]);
+
 	return (
-		<div className="flex flex-col gap-4">
-			{/* Header row: title + timer */}
-			<div className="flex items-center justify-between gap-3">
+		<div className="flex flex-col h-screen gap-4">
+			{/* Header row: title + timer (fixed, not scrolling) */}
+			<div className="flex-shrink-0 flex items-center justify-between gap-3 px-4 pt-4">
 				<div>
 					<div className="font-display text-lg md:text-xl font-bold text-grape">
 						🗺️ {content.title}
@@ -156,69 +195,100 @@ export function TypingTest({
 				<TimerRing seconds={timeLeft} total={duration} pct={ringPct} />
 			</div>
 
-			{/* The prompt — big and reactive */}
+			{/* The prompt — scrollable area that grows to fill space */}
 			<div
-				className="rounded-[2rem] bg-white/70 backdrop-blur border-2 border-white p-6 md:p-8 min-h-[180px] flex items-center"
+				className="flex-grow overflow-y-auto rounded-[2rem] bg-white/70 backdrop-blur border-2 border-white m-4 p-6 md:p-8 flex flex-col items-center justify-center"
 				tabIndex={0}
 			>
+				<style>{pulseKeyframes}</style>
 				<p className="font-display text-2xl md:text-4xl leading-relaxed tracking-wide min-w-0 break-words">
-					{prompt.split("").map((ch, i) => {
-						const isCurrent = i === currentIndex;
-						const isTyped = i < currentIndex;
-						const isCorrect = isTyped && typed[i] === ch;
-						const isWrong = isTyped && typed[i] !== ch;
+					{promptWords.map((word, wordIdx) => {
+						if (word.isSpace) return <span key={`space-${wordIdx}`}> </span>;
+
+						// Each word is wrapped in an inline-block to prevent mid-word breaks
 						return (
-							<span
-								key={i}
-								ref={(el) => {
-									if (el) (charsRef.current as any)[i] = el;
-								}}
-								className={
-									isCurrent
-										? "bg-sunny/40 rounded-md px-0.5 animate-pulse"
-										: isCorrect
-											? "text-teal"
-											: isWrong
-												? "text-red-500 bg-red-100 rounded-md px-0.5 line-through decoration-red-500"
-												: "text-ink/35"
-								}
-							>
-								{ch === " " && !isCurrent && !isTyped ? " " : ch}
+							<span key={`word-${wordIdx}`} className="inline-block">
+								{word.text.split("").map((ch, charIdx) => {
+									// Calculate the absolute character index in the original prompt
+									let charIndex = 0;
+									for (let i = 0; i < wordIdx; i++) {
+										charIndex += promptWords[i].text.length;
+									}
+									charIndex += charIdx;
+
+									const isCurrent = charIndex === currentIndex;
+									const isTyped = charIndex < currentIndex;
+									const isCorrect = isTyped && typed[charIndex] === ch;
+									const isWrong = isTyped && typed[charIndex] !== ch;
+
+									return (
+										<span
+											key={charIdx}
+											ref={(el) => {
+												if (el) (charsRef.current as any)[charIndex] = el;
+											}}
+											className="px-0.5 rounded-md"
+											style={{
+												backgroundColor: isCurrent
+													? "rgb(254 228 92 / 0.4)"
+													: isWrong
+														? "rgb(239 68 68 / 0.2)"
+														: "transparent",
+												color: isCorrect
+													? "rgb(78 205 196)"
+													: isWrong
+														? "rgb(239 68 68)"
+														: "rgb(45 30 21 / 0.21)",
+												textDecoration: isWrong ? "line-through" : "none",
+												textDecorationColor: isWrong
+													? "rgb(239 68 68)"
+													: "transparent",
+												animation: isCurrent
+													? "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+													: "none",
+											}}
+										>
+											{ch}
+										</span>
+									);
+								})}
 							</span>
 						);
 					})}
-					<AnimatePresence>
-						{status === "idle" && (
-							<motion.span
-								key="hint"
-								initial={{ opacity: 0, x: -10 }}
-								animate={{ opacity: 1, x: 0 }}
-								exit={{ opacity: 0, x: 10 }}
-								transition={{ duration: 0.3 }}
-								className="ml-3 text-coral font-bold text-xl md:text-2xl"
-							>
-								<motion.span
-									animate={{ opacity: [0.4, 1, 0.4] }}
-									transition={{ duration: 1.2, repeat: Infinity }}
-								>
-									▶ Start typing!
-								</motion.span>
-							</motion.span>
-						)}
-					</AnimatePresence>
 				</p>
+				<AnimatePresence>
+					{status === "idle" && (
+						<motion.div
+							key="hint"
+							initial={{ opacity: 0, y: 8 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -8 }}
+							transition={{ duration: 0.3 }}
+							className="mt-4 text-coral font-bold text-xl md:text-2xl"
+						>
+							<motion.span
+								animate={{ opacity: [0.4, 1, 0.4] }}
+								transition={{ duration: 1.2, repeat: Infinity }}
+							>
+								▶ Start typing!
+							</motion.span>
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</div>
 
-			{/* Virtual keyboard + hands */}
-			<Keyboard
-				nextChar={nextChar}
-				pressedChar={pressedChar}
-				state={lastState}
-			/>
+			{/* Virtual keyboard + hands (sticky at bottom) */}
+			<div className="flex-shrink-0 px-4 pb-4">
+				<Keyboard
+					nextChar={nextChar}
+					pressedChar={pressedChar}
+					state={lastState}
+				/>
+			</div>
 
-			{/* Footer */}
-			<div className="flex items-center justify-between">
-				<div className="font-display text-sm text-ink/60">
+			{/* Footer stats (sticky at very bottom) */}
+			<div className="flex-shrink-0 flex items-center justify-between px-4 pb-4 text-sm">
+				<div className="font-display text-ink/60">
 					{typed.length} / {prompt.length} characters · {elapsed}s elapsed
 				</div>
 				<Button variant="ghost" size="sm" onClick={onExit}>

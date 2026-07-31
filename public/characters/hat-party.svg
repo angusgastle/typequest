@@ -1,0 +1,10 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Party hat cone -->
+  <path d="M 65 25 L 75 10 L 90 8 L 95 30 Z" fill="#ff1493" stroke="black" stroke-width="1"/>
+  <!-- Decorative dots -->
+  <circle cx="70" cy="18" r="2" fill="gold"/>
+  <circle cx="80" cy="14" r="2" fill="gold"/>
+  <circle cx="88" cy="20" r="2" fill="gold"/>
+  <!-- Pom-pom on top -->
+  <circle cx="82" cy="8" r="4" fill="gold"/>
+</svg>

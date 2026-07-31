@@ -72,6 +72,8 @@ export async function POST(req: Request) {
 			0,
 			(kid.cumulative_score ?? 0) + result.score - penalty,
 		);
+		const coinsEarned = Math.max(1, Math.round(result.score / 10));
+		const newCoins = (kid.coins ?? 0) + coinsEarned;
 
 		// Level is now derived from cumulative score via tier system
 		const newTier = getTier(newCumulativeScore);
@@ -83,6 +85,7 @@ export async function POST(req: Request) {
 				tests_complete: testsComplete,
 				wpm: newWpm,
 				cumulative_score: newCumulativeScore,
+				coins: newCoins,
 				level: newLevel,
 				streak: newStreak,
 				last_quiz_date: todayStr,
@@ -98,6 +101,14 @@ export async function POST(req: Request) {
 				cumulativeScore: newCumulativeScore,
 				avatar: kid.avatar ?? null,
 				avatarColor: kid.avatar_color ?? "#ff6b6b",
+				coins: newCoins,
+				equipped: kid.equipped ?? {
+					base: "base-boy",
+					hat: null,
+					outfit: null,
+					weapon: null,
+				},
+				ownedItems: kid.owned_items ?? ["base-boy", "base-girl"],
 				streak: newStreak,
 				lastQuizDate: todayStr,
 			},

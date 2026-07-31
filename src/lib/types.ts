@@ -11,6 +11,9 @@ export interface Kid {
 	cumulative_score: number;
 	avatar: string | null;
 	avatar_color: string;
+	coins: number;
+	equipped: Record<string, string | null>;
+	owned_items: string[];
 	streak: number;
 	last_quiz_date: string | null;
 	created: string;
@@ -49,6 +52,7 @@ export interface LeaderboardRow {
 	nickname: string;
 	first_name: string;
 	avatar: string;
+	equipped: Record<string, string | null> | null;
 	wpm: number;
 	accuracy: number;
 	score: number;
@@ -62,6 +66,27 @@ export interface Session {
 	cumulativeScore: number;
 	avatar: string | null;
 	avatarColor: string;
+	coins: number;
+	equipped: Record<string, string | null>;
+	ownedItems: string[];
 	streak: number;
 	lastQuizDate: string | null;
+}
+
+export interface Adventure {
+	id: string;
+	theme: string;
+	title: string;
+	prompt: string;
+	difficulty: number;
+}
+
+export type Slot = "base" | "hat" | "outfit" | "weapon";
+
+export interface Item {
+	id: string;
+	slot: Slot;
+	name: string;
+	cost: number;
+	imageUrl: string;
 }

@@ -12,6 +12,9 @@ export async function PATCH(req: Request) {
 	if (body.avatar !== undefined) updates.avatar = body.avatar;
 	if (body.avatarColor !== undefined) updates.avatar_color = body.avatarColor;
 	if (body.firstName !== undefined) updates.first_name = body.firstName;
+	if (body.coins !== undefined) updates.coins = body.coins;
+	if (body.equipped !== undefined) updates.equipped = body.equipped;
+	if (body.ownedItems !== undefined) updates.owned_items = body.ownedItems;
 
 	if (Object.keys(updates).length === 0) {
 		return NextResponse.json({ error: "No updates provided" }, { status: 400 });
@@ -45,6 +48,14 @@ export async function PATCH(req: Request) {
 			cumulativeScore: kid?.cumulative_score ?? 0,
 			avatar: kid?.avatar ?? null,
 			avatarColor: kid?.avatar_color ?? "#ff6b6b",
+			coins: kid?.coins ?? 0,
+			equipped: kid?.equipped ?? {
+				base: "base-boy",
+				hat: null,
+				outfit: null,
+				weapon: null,
+			},
+			ownedItems: kid?.owned_items ?? ["base-boy", "base-girl"],
 			streak: kid?.streak ?? 0,
 			lastQuizDate: kid?.last_quiz_date ?? null,
 		},

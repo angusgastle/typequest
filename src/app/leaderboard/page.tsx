@@ -3,10 +3,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
+import { CharacterAvatar } from "@/components/CharacterAvatar";
 import { NavBar } from "@/components/NavBar";
 import { getLeaderboard, getSession } from "@/lib/data";
 import type { LeaderboardRow, Session } from "@/lib/types";
-import { avatarFor } from "@/lib/utils";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
@@ -95,9 +95,17 @@ export default function LeaderboardPage() {
 											<div className="w-8 text-center font-display font-extrabold text-lg">
 												{i < 3 ? MEDALS[i] : `#${i + 1}`}
 											</div>
-											<div className="grid h-10 w-10 place-items-center rounded-full bg-cream text-2xl">
-												{row.avatar || avatarFor(row.first_name)}
-											</div>
+											<CharacterAvatar
+												equipped={
+													row.equipped ?? {
+														base: "base-boy",
+														hat: null,
+														outfit: null,
+														weapon: null,
+													}
+												}
+												size="sm"
+											/>
 											<div className="flex-1 font-display font-bold">
 												{row.nickname}{" "}
 												{isYou && (

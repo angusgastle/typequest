@@ -1,0 +1,11 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ninja suit -->
+  <path d="M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z" fill="#1a1a1a" stroke="black" stroke-width="1"/>
+  <!-- Belt -->
+  <rect x="60" y="100" width="40" height="6" fill="gold" stroke="black" stroke-width="1"/>
+  <!-- Buckle -->
+  <rect x="76" y="99" width="8" height="8" fill="#ff8c00" stroke="black" stroke-width="1" rx="1"/>
+  <!-- Stripes (speed lines) -->
+  <line x1="65" y1="110" x2="75" y2="110" stroke="red" stroke-width="1"/>
+  <line x1="85" y1="110" x2="95" y2="110" stroke="red" stroke-width="1"/>
+</svg>

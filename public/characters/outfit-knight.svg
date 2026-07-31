@@ -1,0 +1,11 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Armor body -->
+  <path d="M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z" fill="#696969" stroke="black" stroke-width="2"/>
+  <!-- Armor segments -->
+  <line x1="80" y1="90" x2="80" y2="125" stroke="black" stroke-width="1" stroke-dasharray="2,4"/>
+  <!-- Shoulder pauldrons -->
+  <circle cx="55" cy="82" r="6" fill="#a9a9a9" stroke="black" stroke-width="1"/>
+  <circle cx="105" cy="82" r="6" fill="#a9a9a9" stroke="black" stroke-width="1"/>
+  <!-- Center chest plate -->
+  <rect x="75" y="85" width="10" height="20" fill="#a9a9a9" stroke="black" stroke-width="1" rx="1"/>
+</svg>

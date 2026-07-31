@@ -19,6 +19,7 @@ import { avatarFor, getTier, today, yesterday } from "./utils";
 const SESSION_KEY = "tq_session";
 const KIDS_KEY = "tq_kids";
 const TESTS_KEY = "tq_tests";
+const ADVENTURES_KEY = "tq_adventures";
 
 export const isDemo = !(
 	process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -41,6 +42,14 @@ export function getSession(): Session | null {
 		cumulativeScore: parsed.cumulativeScore,
 		avatar: parsed.avatar ?? null,
 		avatarColor: parsed.avatarColor ?? "#ff6b6b",
+		coins: parsed.coins ?? 0,
+		equipped: parsed.equipped ?? {
+			base: "base-boy",
+			hat: null,
+			outfit: null,
+			weapon: null,
+		},
+		ownedItems: parsed.ownedItems ?? ["base-boy", "base-girl"],
 		streak: parsed.streak ?? 0,
 		lastQuizDate: parsed.lastQuizDate ?? null,
 	};
@@ -74,19 +83,32 @@ export async function login(name: string, pin: string): Promise<Session> {
 		cumulativeScore: data.cumulativeScore,
 		avatar: data.avatar ?? null,
 		avatarColor: data.avatarColor ?? "#ff6b6b",
+		coins: data.coins ?? 0,
+		equipped: data.equipped ?? {
+			base: "base-boy",
+			hat: null,
+			outfit: null,
+			weapon: null,
+		},
+		ownedItems: data.ownedItems ?? ["base-boy", "base-girl"],
 		streak: data.streak ?? 0,
 		lastQuizDate: data.lastQuizDate ?? null,
 	};
 }
 
 // ---------------------------------------------------------------------------
-// Generate a test (AI adventure)
+// Get or generate an adventure (with pool reuse if available)
 // ---------------------------------------------------------------------------
-export async function generateTest(level: number): Promise<TestContent> {
-	const res = await fetch("/api/generate-test", {
+export async function generateTest(
+	kidId: string,
+	level: number,
+	kidName?: string,
+): Promise<TestContent> {
+	if (isDemo) return demoGenerateTest(kidId, level, kidName);
+	const res = await fetch("/api/get-adventure", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ level }),
+		body: JSON.stringify({ kidId, level, kidName }),
 	});
 	if (!res.ok) throw new Error("Could not generate adventure");
 	return res.json();
@@ -116,6 +138,14 @@ export async function submitTest(
 			cumulativeScore: data.kid.cumulativeScore,
 			avatar: data.kid.avatar ?? null,
 			avatarColor: data.kid.avatarColor ?? "#ff6b6b",
+			coins: data.kid.coins ?? 0,
+			equipped: data.kid.equipped ?? {
+				base: "base-boy",
+				hat: null,
+				outfit: null,
+				weapon: null,
+			},
+			ownedItems: data.kid.ownedItems ?? ["base-boy", "base-girl"],
 			streak: data.kid.streak ?? 0,
 			lastQuizDate: data.kid.lastQuizDate ?? null,
 		},
@@ -128,7 +158,14 @@ export async function submitTest(
 // ---------------------------------------------------------------------------
 export async function updateKid(
 	kidId: string,
-	updates: { avatar?: string; avatarColor?: string; firstName?: string },
+	updates: {
+		avatar?: string;
+		avatarColor?: string;
+		firstName?: string;
+		coins?: number;
+		equipped?: Record<string, string | null>;
+		ownedItems?: string[];
+	},
 ): Promise<Session> {
 	if (isDemo) return demoUpdateKid(kidId, updates);
 	const res = await fetch("/api/update-kid", {
@@ -145,6 +182,14 @@ export async function updateKid(
 		cumulativeScore: data.kid.cumulativeScore,
 		avatar: data.kid.avatar ?? null,
 		avatarColor: data.kid.avatarColor ?? "#ff6b6b",
+		coins: data.kid.coins ?? 0,
+		equipped: data.kid.equipped ?? {
+			base: "base-boy",
+			hat: null,
+			outfit: null,
+			weapon: null,
+		},
+		ownedItems: data.kid.ownedItems ?? ["base-boy", "base-girl"],
 		streak: data.kid.streak ?? 0,
 		lastQuizDate: data.kid.lastQuizDate ?? null,
 	};
@@ -198,11 +243,86 @@ export async function getLeaderboard(
 	return res.json();
 }
 
+// ---------------------------------------------------------------------------
+// Buy item (cosmetics store)
+// ---------------------------------------------------------------------------
+export async function buyItem(kidId: string, itemId: string): Promise<Session> {
+	if (isDemo) return demoBuyItem(kidId, itemId);
+	const res = await fetch("/api/buy-item", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ kidId, itemId }),
+	});
+	if (!res.ok) {
+		const { error } = await res.json().catch(() => ({}));
+		throw new Error(error || "Could not buy item");
+	}
+	const data = await res.json();
+	return {
+		kidId: data.kid.kidId,
+		name: data.kid.name,
+		level: data.kid.level,
+		cumulativeScore: data.kid.cumulativeScore,
+		avatar: data.kid.avatar ?? null,
+		avatarColor: data.kid.avatarColor ?? "#ff6b6b",
+		coins: data.kid.coins ?? 0,
+		equipped: data.kid.equipped ?? {
+			base: "base-boy",
+			hat: null,
+			outfit: null,
+			weapon: null,
+		},
+		ownedItems: data.kid.ownedItems ?? ["base-boy", "base-girl"],
+		streak: data.kid.streak ?? 0,
+		lastQuizDate: data.kid.lastQuizDate ?? null,
+	};
+}
+
+// ---------------------------------------------------------------------------
+// Equip item (cosmetics store)
+// ---------------------------------------------------------------------------
+export async function equipItem(
+	kidId: string,
+	slot: string,
+	itemId: string | null,
+): Promise<Session> {
+	if (isDemo) return demoEquipItem(kidId, slot, itemId);
+	const res = await fetch("/api/equip-item", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ kidId, slot, itemId }),
+	});
+	if (!res.ok) {
+		const { error } = await res.json().catch(() => ({}));
+		throw new Error(error || "Could not equip item");
+	}
+	const data = await res.json();
+	return {
+		kidId: data.kid.kidId,
+		name: data.kid.name,
+		level: data.kid.level,
+		cumulativeScore: data.kid.cumulativeScore,
+		avatar: data.kid.avatar ?? null,
+		avatarColor: data.kid.avatarColor ?? "#ff6b6b",
+		coins: data.kid.coins ?? 0,
+		equipped: data.kid.equipped ?? {
+			base: "base-boy",
+			hat: null,
+			outfit: null,
+			weapon: null,
+		},
+		ownedItems: data.kid.ownedItems ?? ["base-boy", "base-girl"],
+		streak: data.kid.streak ?? 0,
+		lastQuizDate: data.kid.lastQuizDate ?? null,
+	};
+}
+
 // ===========================================================================
 // DEMO MODE (localStorage) — no backend required
 // ===========================================================================
 interface DemoKid extends Kid {
 	pin: string;
+	seen_adventure_ids?: string[];
 }
 interface DemoTest {
 	id: string;
@@ -215,6 +335,13 @@ interface DemoTest {
 	backspaces: number;
 	created: string;
 }
+interface DemoAdventure {
+	id: string;
+	theme: string;
+	title: string;
+	prompt: string;
+	difficulty: number;
+}
 
 function loadKids(): Record<string, DemoKid> {
 	if (typeof window === "undefined") return {};
@@ -225,8 +352,13 @@ function loadKids(): Record<string, DemoKid> {
 		const k = kids[id];
 		if (k.avatar === undefined) k.avatar = null;
 		if (k.avatar_color === undefined) k.avatar_color = "#ff6b6b";
+		if (k.coins === undefined) k.coins = 0;
+		if (k.equipped === undefined)
+			k.equipped = { base: "base-boy", hat: null, outfit: null, weapon: null };
+		if (k.owned_items === undefined) k.owned_items = ["base-boy", "base-girl"];
 		if (k.streak === undefined) k.streak = 0;
 		if (k.last_quiz_date === undefined) k.last_quiz_date = null;
+		if (k.seen_adventure_ids === undefined) k.seen_adventure_ids = [];
 	}
 	return kids;
 }
@@ -247,6 +379,15 @@ function loadTests(): DemoTest[] {
 function saveTests(tests: DemoTest[]) {
 	if (typeof window !== "undefined")
 		localStorage.setItem(TESTS_KEY, JSON.stringify(tests));
+}
+function loadAdventures(): DemoAdventure[] {
+	if (typeof window === "undefined") return [];
+	const raw = localStorage.getItem(ADVENTURES_KEY) || "[]";
+	return JSON.parse(raw);
+}
+function saveAdventures(adventures: DemoAdventure[]) {
+	if (typeof window !== "undefined")
+		localStorage.setItem(ADVENTURES_KEY, JSON.stringify(adventures));
 }
 
 function uid() {
@@ -278,6 +419,9 @@ function demoLogin(name: string, pin: string): Session {
 			cumulative_score: 0,
 			avatar: null,
 			avatar_color: "#ff6b6b",
+			coins: 0,
+			equipped: { base: "base-boy", hat: null, outfit: null, weapon: null },
+			owned_items: ["base-boy", "base-girl"],
 			streak: 0,
 			last_quiz_date: null,
 			pin,
@@ -295,6 +439,9 @@ function demoLogin(name: string, pin: string): Session {
 		cumulativeScore: kid.cumulative_score,
 		avatar: kid.avatar,
 		avatarColor: kid.avatar_color,
+		coins: kid.coins,
+		equipped: kid.equipped,
+		ownedItems: kid.owned_items,
 		streak: kid.streak,
 		lastQuizDate: kid.last_quiz_date,
 	};
@@ -351,6 +498,8 @@ function demoSubmit(
 		kid.cumulative_score + result.score - penalty,
 	);
 	kid.cumulative_score = newCumulativeScore;
+	const coinsEarned = Math.max(1, Math.round(result.score / 10));
+	kid.coins += coinsEarned;
 	kid.wpm = Math.round(
 		(kid.wpm * (kid.tests_complete - 1) + result.wpm) / kid.tests_complete,
 	);
@@ -370,6 +519,9 @@ function demoSubmit(
 		cumulativeScore: newCumulativeScore,
 		avatar: kid.avatar,
 		avatarColor: kid.avatar_color,
+		coins: kid.coins,
+		equipped: kid.equipped,
+		ownedItems: kid.owned_items,
 		streak: newStreak,
 		lastQuizDate: todayStr,
 	};
@@ -379,7 +531,14 @@ function demoSubmit(
 
 function demoUpdateKid(
 	kidId: string,
-	updates: { avatar?: string; avatarColor?: string; firstName?: string },
+	updates: {
+		avatar?: string;
+		avatarColor?: string;
+		firstName?: string;
+		coins?: number;
+		equipped?: Record<string, string | null>;
+		ownedItems?: string[];
+	},
 ): Session {
 	const kids = loadKids();
 	const kid = kids[kidId];
@@ -388,6 +547,9 @@ function demoUpdateKid(
 	if (updates.avatar !== undefined) kid.avatar = updates.avatar;
 	if (updates.avatarColor !== undefined) kid.avatar_color = updates.avatarColor;
 	if (updates.firstName !== undefined) kid.first_name = updates.firstName;
+	if (updates.coins !== undefined) kid.coins = updates.coins;
+	if (updates.equipped !== undefined) kid.equipped = updates.equipped;
+	if (updates.ownedItems !== undefined) kid.owned_items = updates.ownedItems;
 	kid.last_updated = new Date().toISOString();
 	kids[kidId] = kid;
 	saveKids(kids);
@@ -400,6 +562,9 @@ function demoUpdateKid(
 		cumulativeScore: currentSession?.cumulativeScore ?? 0,
 		avatar: kid.avatar,
 		avatarColor: kid.avatar_color,
+		coins: kid.coins,
+		equipped: kid.equipped,
+		ownedItems: kid.owned_items,
 		streak: currentSession?.streak ?? 0,
 		lastQuizDate: currentSession?.lastQuizDate ?? null,
 	};
@@ -512,6 +677,7 @@ function demoLeaderboard(scope: "week" | "all"): LeaderboardRow[] {
 			nickname: kid.nickname || kid.first_name,
 			first_name: kid.first_name,
 			avatar: kid.avatar || avatarFor(kid.first_name),
+			equipped: kid.equipped ?? null,
 			wpm,
 			accuracy,
 			score,
@@ -527,4 +693,150 @@ function demoLeaderboard(scope: "week" | "all"): LeaderboardRow[] {
 		return [];
 	}
 	return rows;
+}
+
+function demoGenerateTest(
+	kidId: string,
+	level: number,
+	kidName?: string,
+): Promise<TestContent> {
+	const kids = loadKids();
+	const kid = kids[kidId];
+	if (!kid) throw new Error("Kid not found");
+
+	// Import difficultyForLevel
+	const { difficultyForLevel } = require("./generate-test");
+	const difficulty = difficultyForLevel(level);
+
+	// Load adventure pool
+	const adventures = loadAdventures();
+
+	// Find unseen adventures matching difficulty
+	const seenIds = kid.seen_adventure_ids ?? [];
+	const available = adventures.filter(
+		(a) => a.difficulty === difficulty && !seenIds.includes(a.id),
+	);
+
+	// If we found one, use it
+	if (available.length > 0) {
+		const chosen = available[Math.floor(Math.random() * available.length)];
+		kid.seen_adventure_ids = [...(kid.seen_adventure_ids ?? []), chosen.id];
+		kids[kidId] = kid;
+		saveKids(kids);
+		return Promise.resolve({
+			prompt: chosen.prompt,
+			theme: chosen.theme,
+			title: chosen.title,
+		});
+	}
+
+	// No unseen adventure — generate and add to pool
+	const {
+		aiGenerateTest,
+		localGenerateTest,
+		isAiConfigured,
+	} = require("./generate-test");
+	return (
+		isAiConfigured()
+			? aiGenerateTest(level, kidName)
+			: localGenerateTest(level, kidName)
+	).then((generated: TestContent) => {
+		const newAdventure: DemoAdventure = {
+			id: uid(),
+			theme: generated.theme,
+			title: generated.title,
+			prompt: generated.prompt,
+			difficulty,
+		};
+		adventures.push(newAdventure);
+		saveAdventures(adventures);
+
+		kid.seen_adventure_ids = [
+			...(kid.seen_adventure_ids ?? []),
+			newAdventure.id,
+		];
+		kids[kidId] = kid;
+		saveKids(kids);
+
+		return generated;
+	});
+}
+
+function demoBuyItem(kidId: string, itemId: string): Session {
+	const { ITEMS, getItem } = require("./items");
+	const kids = loadKids();
+	const kid = kids[kidId];
+	if (!kid) throw new Error("Kid not found");
+
+	const item = getItem(itemId);
+	if (!item) throw new Error("Item not found");
+	if (item.cost > 0 && kid.coins < item.cost)
+		throw new Error("Not enough coins");
+
+	// Deduct coins and add to owned items
+	if (item.cost > 0) kid.coins -= item.cost;
+	if (!kid.owned_items.includes(itemId)) {
+		kid.owned_items.push(itemId);
+	}
+	kid.last_updated = new Date().toISOString();
+	kids[kidId] = kid;
+	saveKids(kids);
+
+	const currentSession = getSession();
+	const session: Session = {
+		kidId: kid.id,
+		name: kid.first_name,
+		level: currentSession?.level ?? 1,
+		cumulativeScore: currentSession?.cumulativeScore ?? 0,
+		avatar: kid.avatar,
+		avatarColor: kid.avatar_color,
+		coins: kid.coins,
+		equipped: kid.equipped,
+		ownedItems: kid.owned_items,
+		streak: currentSession?.streak ?? 0,
+		lastQuizDate: currentSession?.lastQuizDate ?? null,
+	};
+	setSession(session);
+	return session;
+}
+
+function demoEquipItem(
+	kidId: string,
+	slot: string,
+	itemId: string | null,
+): Session {
+	const { getItem } = require("./items");
+	const kids = loadKids();
+	const kid = kids[kidId];
+	if (!kid) throw new Error("Kid not found");
+
+	// Validate ownership
+	if (itemId !== null) {
+		const item = getItem(itemId);
+		if (!item) throw new Error("Item not found");
+		if (item.slot !== slot) throw new Error("Item slot mismatch");
+		if (!kid.owned_items.includes(itemId)) throw new Error("Item not owned");
+	}
+
+	kid.equipped[slot] = itemId;
+	kid.last_updated = new Date().toISOString();
+	kids[kidId] = kid;
+	saveKids(kids);
+
+	const currentSession = getSession();
+	const session: Session = {
+		kidId: kid.id,
+		name: kid.first_name,
+		level: currentSession?.level ?? 1,
+		cumulativeScore: currentSession?.cumulativeScore ?? 0,
+		avatar: kid.avatar,
+		avatarColor: kid.avatar_color,
+		coins: kid.coins,
+		equipped: kid.equipped,
+		ownedItems: kid.owned_items,
+		streak: currentSession?.streak ?? 0,
+		lastQuizDate: currentSession?.lastQuizDate ?? null,
+	};
+	setSession(session);
+	return session;
 }

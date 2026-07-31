@@ -1,0 +1,8 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wizard hat (tall cone) -->
+  <path d="M 65 20 L 70 10 L 85 5 L 100 15 L 95 30 Z" fill="#4b0082" stroke="black" stroke-width="1"/>
+  <!-- Hat brim -->
+  <ellipse cx="80" cy="32" rx="22" ry="6" fill="#663399" stroke="black" stroke-width="1"/>
+  <!-- Star on hat -->
+  <text x="82" y="18" font-size="14" fill="gold" text-anchor="middle">✨</text>
+</svg>

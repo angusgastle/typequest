@@ -39,7 +39,7 @@ export default function AdventurePage() {
 		setPhase("generating");
 		setError(null);
 		try {
-			const c = await generateTest(session.level);
+			const c = await generateTest(session.kidId, session.level, session.name);
 			setContent(c);
 			setPhase("playing");
 		} catch {

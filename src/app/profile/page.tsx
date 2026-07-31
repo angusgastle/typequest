@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
+import { CharacterAvatar } from "@/components/CharacterAvatar";
 import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui";
 import {
@@ -15,9 +16,6 @@ import {
 } from "@/lib/data";
 import type { Session } from "@/lib/types";
 import {
-	AVATAR_COLORS,
-	AVATARS,
-	avatarFor,
 	getCurrentTierThreshold,
 	getNextTierThreshold,
 	getStreakMultiplier,
@@ -75,29 +73,6 @@ export default function ProfilePage() {
 				)
 			: 100;
 	const streakMultiplier = getStreakMultiplier(session.streak);
-	const displayAvatar = session.avatar || avatarFor(session.name);
-
-	const handleAvatarSelect = async (emoji: string) => {
-		try {
-			const updated = await updateKid(session.kidId, { avatar: emoji });
-			setSess(updated);
-			setSession(updated);
-			window.dispatchEvent(new Event("tq-session-changed"));
-		} catch {
-			setMessage({ type: "err", text: "Could not save avatar" });
-		}
-	};
-
-	const handleColorSelect = async (color: string) => {
-		try {
-			const updated = await updateKid(session.kidId, { avatarColor: color });
-			setSess(updated);
-			setSession(updated);
-			window.dispatchEvent(new Event("tq-session-changed"));
-		} catch {
-			setMessage({ type: "err", text: "Could not save color" });
-		}
-	};
 
 	const handleNameSave = async () => {
 		if (!newName.trim()) return;
@@ -177,58 +152,23 @@ export default function ProfilePage() {
 					</motion.div>
 				)}
 
-				{/* ── Avatar Section ── */}
+				{/* ── Character Section ── */}
 				<motion.section
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					className="rounded-[2rem] bg-white/70 backdrop-blur border-2 border-white p-6 mb-4"
 				>
-					<h2 className="font-display text-xl font-bold mb-4">Your Avatar</h2>
+					<h2 className="font-display text-xl font-bold mb-4">
+						Your Character
+					</h2>
 
-					{/* Current avatar preview */}
-					<div className="flex justify-center mb-4">
-						<div
-							className="grid h-20 w-20 place-items-center rounded-full text-4xl border-4 border-white shadow-lg"
-							style={{ backgroundColor: session.avatarColor }}
-						>
-							{displayAvatar}
+					<div className="flex items-center justify-between gap-4">
+						<div className="flex justify-center">
+							<CharacterAvatar equipped={session.equipped} size="md" />
 						</div>
-					</div>
-
-					{/* Avatar emoji grid */}
-					<p className="text-sm text-ink/50 font-display mb-2">Pick an emoji</p>
-					<div className="grid grid-cols-10 gap-2 mb-4">
-						{AVATARS.map((emoji) => (
-							<button
-								key={emoji}
-								onClick={() => handleAvatarSelect(emoji)}
-								className={`grid h-10 w-10 place-items-center rounded-xl text-xl transition-all hover:scale-110 ${
-									session.avatar === emoji
-										? "bg-coral/20 ring-2 ring-coral"
-										: "bg-white hover:bg-cream"
-								}`}
-							>
-								{emoji}
-							</button>
-						))}
-					</div>
-
-					{/* Color swatches */}
-					<p className="text-sm text-ink/50 font-display mb-2">Pick a color</p>
-					<div className="flex gap-2 flex-wrap">
-						{AVATAR_COLORS.map((c) => (
-							<button
-								key={c.value}
-								onClick={() => handleColorSelect(c.value)}
-								className={`h-10 w-10 rounded-xl transition-all hover:scale-110 border-2 ${
-									session.avatarColor === c.value
-										? "border-ink ring-2 ring-ink/30"
-										: "border-white"
-								}`}
-								style={{ backgroundColor: c.value }}
-								title={c.name}
-							/>
-						))}
+						<Button onClick={() => router.push("/character")}>
+							🎒 Customize
+						</Button>
 					</div>
 				</motion.section>
 

@@ -21,6 +21,34 @@ const THEMES = [
 	"The Shadow Garden",
 ];
 
+const GENRES = ["Adventure", "Mystery", "Science Fiction", "School Drama"];
+
+function getMonthName(): string {
+	const months = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December",
+	];
+	return months[new Date().getMonth()];
+}
+
+function getSeason(): string {
+	const month = new Date().getMonth();
+	if (month >= 2 && month <= 4) return "Spring";
+	if (month >= 5 && month <= 7) return "Summer";
+	if (month >= 8 && month <= 10) return "Autumn";
+	return "Winter";
+}
+
 /** Map absolute level (1-30) to a 5-tier difficulty index. */
 function difficultyForLevel(level: number): number {
 	if (level <= 2) return 1;
@@ -55,27 +83,44 @@ const TEMPLATES: Record<number, string[]> = {
 	],
 };
 
-export function localGenerateTest(level: number): TestContent {
+export function localGenerateTest(
+	level: number,
+	kidName?: string,
+): TestContent {
 	const lvl = difficultyForLevel(level);
 	const pool = TEMPLATES[lvl];
 	const prompt = pool[Math.floor(Math.random() * pool.length)];
 	const theme = THEMES[Math.floor(Math.random() * THEMES.length)];
-	return { prompt, theme, title: theme };
+	const genre = GENRES[Math.floor(Math.random() * GENRES.length)];
+	return { prompt, theme, title: `${genre}: ${theme}` };
 }
 
-export async function aiGenerateTest(level: number): Promise<TestContent> {
+export async function aiGenerateTest(
+	level: number,
+	kidName?: string,
+): Promise<TestContent> {
 	const apiKey = process.env.ANTHROPIC_API_KEY;
 	if (!apiKey) {
-		return localGenerateTest(level);
+		return localGenerateTest(level, kidName);
 	}
 
 	const client = new Anthropic({ apiKey });
 	const lvl = difficultyForLevel(level);
+	const genre = GENRES[Math.floor(Math.random() * GENRES.length)];
+	const month = getMonthName();
+	const season = getSeason();
 
 	const systemPrompt =
 		"You are a friendly storyteller for a kids' typing tutor. Generate a fun, age-appropriate typing adventure. Always use Canadian spelling (e.g., colour, behaviour, centre, honour, favourite, neighbour, metre, litre).";
 
-	const userPrompt = `Generate a fun, kid-friendly typing adventure for typing level ${lvl}.
+	const userPrompt = `Generate a fun, kid-friendly ${genre} typing adventure for typing level ${lvl}.
+Current Context:
+- Genre: ${genre}
+- Month: ${month}
+- Season: ${season}
+${kidName ? `- Character Name: ${kidName} (include ${kidName} as a character in the story)` : ""}
+
+Difficulty levels:
 - Level 1: one short simple sentence, lowercase, no punctuation.
 - Level 2: two sentences with basic punctuation, still simple words.
 - Level 3: a richer 2-3 sentence paragraph with punctuation and some capitals.
@@ -105,7 +150,7 @@ Use Canadian spelling (colour, behaviour, centre, honour, favourite, neighbour, 
 			prompt: parsed.prompt,
 		};
 	} catch {
-		return localGenerateTest(level);
+		return localGenerateTest(level, kidName);
 	}
 }
 
