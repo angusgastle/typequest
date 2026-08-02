@@ -60,22 +60,24 @@ function difficultyForLevel(level: number): number {
 
 const TEMPLATES: Record<number, string[]> = {
 	1: [
-		"the quick brown fox jumps over the lazy dog",
-		"a kind cat and a small dog play in the warm sun",
-		"the big tree has a tiny nest way up high",
+		"the cat sat on the mat",
+		"a dog and a fox ran in the sun",
+		"the red bird sat on a high tree",
 	],
 	2: [
-		"A wise old owl lived in a quiet tree. She liked to watch the moon at night.",
-		"The little fox could run very fast. He liked to race the wind each day.",
-		"A small boat sailed across the blue lake. The sun was warm and bright.",
+		"The cat is happy. It likes to play. The dog can run fast.",
+		"A fox can run very fast. It jumps over big rocks. The fox is clever.",
+		"The moon is bright in the sky. I like to see it at night. Stars shine too.",
 	],
 	3: [
-		"Deep in the whispering cavern, a tiny dragon slept on a pile of shiny coins, dreaming of flying through the clouds.",
-		"The cloud castle floated above the mountains. Its gates were made of light, and the wind sang songs through the towers.",
+		"The quick, brown fox jumped over the lazy dog, and it was very fast. Everyone cheered loudly.",
+		"Deep in the forest, the tiny dragon heard the wind, which sang softly through the tall trees above.",
+		"She walked along the beach, watching the waves crash gently onto the warm sand, feeling happy and free.",
 	],
 	4: [
-		"The explorer packed her bag with a compass, 3 water bottles, and a worn map. She stepped into the cave, listening to water drip far below. Day 14 of the expedition had begun.",
-		"Captain Felix steered the ship through stormy seas, checking the radar for islands. The crew of 7 worked the ropes while rain hammered the deck. They had 200 miles left to sail.",
+		"The explorer packed 3 items: a map, 2 water bottles, and a compass (worth $89.99). Day 5 of the journey had begun; the weather was cold & windy!",
+		"There were 7 coins in the chest, worth $42.50 total. The pirate smiled; he had found treasure! It weighed 15 kg. The date: 1885.",
+		"Maria found 4 keys on the shelf. One key cost $3.99; the others were free. She'd never seen anything like it (very strange!). Total: $3.99.",
 	],
 	5: [
 		'The laboratory hummed with energy as Dr. Kim adjusted the dials. "Subject #47 is responding well," she noted, writing 87.3% on her clipboard. The machine\'s output had increased by 12% since Monday; a breakthrough! She smiled & wondered: could this change everything?\n\nMeanwhile, across campus, her colleague Prof. Reyes was reaching the opposite conclusion. His data showed a 5% decline, not growth. "We need to compare notes," he muttered, dialing her extension.',
@@ -120,12 +122,12 @@ Current Context:
 - Season: ${season}
 ${kidName ? `- Character Name: ${kidName} (include ${kidName} as a character in the story)` : ""}
 
-Difficulty levels:
-- Level 1: one short simple sentence, lowercase, no punctuation.
-- Level 2: two sentences with basic punctuation, still simple words.
-- Level 3: a richer 2-3 sentence paragraph with punctuation and some capitals.
-- Level 4: a paragraph with full punctuation, capitals, and numbers.
-- Level 5: multi-paragraph text with complex sentences, symbols (! ? ; '), and varied punctuation.
+Difficulty levels with specific requirements:
+- Level 1: One simple sentence, lowercase, no capitals, no punctuation. Only basic 3-5 letter words. Example: "the cat sat on the red mat"
+- Level 2: Two simple sentences. Capitals at sentence start, periods at end. Simple words, possibly one contraction (it's, can't). Example: "The cat is happy. It plays all day."
+- Level 3: 2-3 sentences with commas and varied punctuation. Longer words, more complex structures. NO numbers or symbols. Example: "The quick, brown fox jumped over the lazy dog, and it was very fast."
+- Level 4: 2-3 sentences or short paragraph. Include numbers (quantities, dates, percentages) and common symbols (&, $, %, :, ;). More punctuation variety. Example: "She found 3 coins; they sparkled. The total was $42.50!"
+- Level 5: Multi-paragraph text (2-3 short paragraphs separated by newlines). Complex punctuation (quotes, exclamation marks, apostrophes, ellipsis, dashes). Numbers, symbols, and varied capitalization. Example: "The lab hummed with energy. "Subject #47 is responding well," she noted..."
 
 Use Canadian spelling (colour, behaviour, centre, honour, favourite, neighbour, metre, litre, etc.). Keep it encouraging and age-appropriate. Do not include emoji inside the text. Respond ONLY with valid JSON, no markdown fences, in this exact shape:
 {"title": string, "theme": string, "prompt": string}`;
