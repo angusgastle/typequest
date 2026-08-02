@@ -197,7 +197,7 @@ export function TypingTest({
 
 			{/* The prompt — scrollable area that grows to fill space */}
 			<div
-				className="flex-grow overflow-y-auto rounded-[2rem] bg-white/70 backdrop-blur border-2 border-white m-4 p-6 md:p-8 flex flex-col items-center justify-center"
+				className="flex-grow overflow-y-auto rounded-[2rem] bg-white/70 backdrop-blur border-2 border-white m-4 p-6 md:p-8 flex flex-col items-center justify-start"
 				tabIndex={0}
 			>
 				<style>{pulseKeyframes}</style>
