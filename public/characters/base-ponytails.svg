@@ -1,0 +1,22 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hair top -->
+  <ellipse cx="80" cy="40" rx="30" ry="24" fill="#d2691e"/>
+  <!-- Ponytails -->
+  <ellipse cx="45" cy="55" rx="8" ry="16" fill="#d2691e"/>
+  <ellipse cx="115" cy="55" rx="8" ry="16" fill="#d2691e"/>
+  <!-- Hair ties -->
+  <rect x="40" y="40" width="10" height="4" fill="#ff69b4" rx="2"/>
+  <rect x="110" y="40" width="10" height="4" fill="#ff69b4" rx="2"/>
+  <!-- Head -->
+  <circle cx="80" cy="50" r="28" fill="#f4a460"/>
+  <!-- Body (yellow shirt) -->
+  <rect x="60" y="80" width="40" height="50" fill="#ffd93d" rx="5"/>
+  <!-- Arms -->
+  <rect x="30" y="85" width="30" height="12" fill="#f4a460" rx="6"/>
+  <rect x="100" y="85" width="30" height="12" fill="#f4a460" rx="6"/>
+  <!-- Eyes -->
+  <circle cx="72" cy="45" r="3" fill="black"/>
+  <circle cx="88" cy="45" r="3" fill="black"/>
+  <!-- Smile -->
+  <path d="M 75 55 Q 80 58 85 55" stroke="black" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

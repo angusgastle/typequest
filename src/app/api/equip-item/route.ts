@@ -11,6 +11,14 @@ export async function POST(req: Request) {
 		return NextResponse.json({ error: "Missing data" }, { status: 400 });
 	}
 
+	// The base slot must always have a body — it can be swapped, never cleared.
+	if (slot === "base" && itemId === null) {
+		return NextResponse.json(
+			{ error: "Base cannot be removed" },
+			{ status: 400 },
+		);
+	}
+
 	const supabase = getServerSupabase();
 	if (!hasSupabase() || !supabase) {
 		return NextResponse.json({ error: "DB not configured" }, { status: 503 });
@@ -40,7 +48,8 @@ export async function POST(req: Request) {
 			);
 		}
 		const ownedItems = (kid.owned_items ?? []) as string[];
-		if (!ownedItems.includes(itemId)) {
+		// Free items (cost 0) are always ownable, regardless of owned_items.
+		if (item.cost !== 0 && !ownedItems.includes(itemId)) {
 			return NextResponse.json({ error: "Item not owned" }, { status: 400 });
 		}
 	}
@@ -67,8 +76,6 @@ export async function POST(req: Request) {
 			name: kid.first_name,
 			level: kid.level ?? 1,
 			cumulativeScore: kid.cumulative_score ?? 0,
-			avatar: kid.avatar ?? null,
-			avatarColor: kid.avatar_color ?? "#ff6b6b",
 			coins: kid.coins ?? 0,
 			equipped,
 			ownedItems: kid.owned_items ?? ["base-boy", "base-girl"],

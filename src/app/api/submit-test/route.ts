@@ -99,8 +99,6 @@ export async function POST(req: Request) {
 				name: kid.first_name,
 				level: newLevel,
 				cumulativeScore: newCumulativeScore,
-				avatar: kid.avatar ?? null,
-				avatarColor: kid.avatar_color ?? "#ff6b6b",
 				coins: newCoins,
 				equipped: kid.equipped ?? {
 					base: "base-boy",
@@ -122,8 +120,6 @@ export async function POST(req: Request) {
 			name: null,
 			level: 1,
 			cumulativeScore: 0,
-			avatar: null,
-			avatarColor: "#ff6b6b",
 			streak: 0,
 			lastQuizDate: null,
 		},

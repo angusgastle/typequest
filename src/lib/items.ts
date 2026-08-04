@@ -5,16 +5,37 @@ export const ITEMS: Item[] = [
 	{
 		id: "base-boy",
 		slot: "base",
-		name: "Boy",
+		name: "Alex",
 		cost: 0,
 		imageUrl: "/characters/base-boy.svg",
 	},
 	{
 		id: "base-girl",
 		slot: "base",
-		name: "Girl",
+		name: "Sam",
 		cost: 0,
 		imageUrl: "/characters/base-girl.svg",
+	},
+	{
+		id: "base-curly",
+		slot: "base",
+		name: "Curly",
+		cost: 0,
+		imageUrl: "/characters/base-curly.svg",
+	},
+	{
+		id: "base-ponytails",
+		slot: "base",
+		name: "Pigtails",
+		cost: 0,
+		imageUrl: "/characters/base-ponytails.svg",
+	},
+	{
+		id: "base-dark",
+		slot: "base",
+		name: "Scout",
+		cost: 0,
+		imageUrl: "/characters/base-dark.svg",
 	},
 
 	// Hats
@@ -39,6 +60,27 @@ export const ITEMS: Item[] = [
 		cost: 100,
 		imageUrl: "/characters/hat-crown.svg",
 	},
+	{
+		id: "hat-cap",
+		slot: "hat",
+		name: "Baseball Cap",
+		cost: 40,
+		imageUrl: "/characters/hat-cap.svg",
+	},
+	{
+		id: "hat-helmet",
+		slot: "hat",
+		name: "Horned Helmet",
+		cost: 80,
+		imageUrl: "/characters/hat-helmet.svg",
+	},
+	{
+		id: "hat-flower",
+		slot: "hat",
+		name: "Flower Crown",
+		cost: 50,
+		imageUrl: "/characters/hat-flower.svg",
+	},
 
 	// Outfits
 	{
@@ -62,6 +104,27 @@ export const ITEMS: Item[] = [
 		cost: 100,
 		imageUrl: "/characters/outfit-ninja.svg",
 	},
+	{
+		id: "outfit-super",
+		slot: "outfit",
+		name: "Hero Cape",
+		cost: 80,
+		imageUrl: "/characters/outfit-super.svg",
+	},
+	{
+		id: "outfit-pirate",
+		slot: "outfit",
+		name: "Pirate",
+		cost: 90,
+		imageUrl: "/characters/outfit-pirate.svg",
+	},
+	{
+		id: "outfit-wizard",
+		slot: "outfit",
+		name: "Wizard Robe",
+		cost: 110,
+		imageUrl: "/characters/outfit-wizard.svg",
+	},
 
 	// Weapons
 	{
@@ -84,6 +147,27 @@ export const ITEMS: Item[] = [
 		name: "Bow",
 		cost: 70,
 		imageUrl: "/characters/weapon-bow.svg",
+	},
+	{
+		id: "weapon-shield",
+		slot: "weapon",
+		name: "Shield",
+		cost: 60,
+		imageUrl: "/characters/weapon-shield.svg",
+	},
+	{
+		id: "weapon-axe",
+		slot: "weapon",
+		name: "Battle Axe",
+		cost: 80,
+		imageUrl: "/characters/weapon-axe.svg",
+	},
+	{
+		id: "weapon-wand",
+		slot: "weapon",
+		name: "Star Wand",
+		cost: 50,
+		imageUrl: "/characters/weapon-wand.svg",
 	},
 ];
 

@@ -1,0 +1,9 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cape (drape at sides) -->
+  <path d="M 50 82 L 38 130 L 60 130 Z" fill="#ff3b3b" stroke="black" stroke-width="1"/>
+  <path d="M 110 82 L 122 130 L 100 130 Z" fill="#ff3b3b" stroke="black" stroke-width="1"/>
+  <!-- Suit body -->
+  <path d="M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z" fill="#2b3a67" stroke="black" stroke-width="1"/>
+  <!-- Emblem star -->
+  <polygon points="80,95 83,103 92,103 85,109 88,118 80,113 72,118 75,109 68,103 77,103" fill="#ffd93d" stroke="black" stroke-width="0.5"/>
+</svg>

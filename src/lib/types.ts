@@ -9,8 +9,6 @@ export interface Kid {
 	tests_complete: number;
 	level: number;
 	cumulative_score: number;
-	avatar: string | null;
-	avatar_color: string;
 	coins: number;
 	equipped: Record<string, string | null>;
 	owned_items: string[];
@@ -51,7 +49,6 @@ export interface LeaderboardRow {
 	kid_id: string;
 	nickname: string;
 	first_name: string;
-	avatar: string;
 	equipped: Record<string, string | null> | null;
 	wpm: number;
 	accuracy: number;
@@ -64,8 +61,6 @@ export interface Session {
 	name: string;
 	level: number;
 	cumulativeScore: number;
-	avatar: string | null;
-	avatarColor: string;
 	coins: number;
 	equipped: Record<string, string | null>;
 	ownedItems: string[];

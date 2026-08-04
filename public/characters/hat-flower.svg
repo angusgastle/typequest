@@ -1,0 +1,12 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Leaf band -->
+  <path d="M 54 42 Q 80 26 106 42 Q 80 36 54 42 Z" fill="#6bcb77" stroke="black" stroke-width="1"/>
+  <!-- Flowers -->
+  <circle cx="62" cy="34" r="4" fill="#ff69b4" stroke="black" stroke-width="0.5"/>
+  <circle cx="80" cy="28" r="4" fill="#ffd93d" stroke="black" stroke-width="0.5"/>
+  <circle cx="98" cy="34" r="4" fill="#ff69b4" stroke="black" stroke-width="0.5"/>
+  <!-- Centers -->
+  <circle cx="62" cy="34" r="1.5" fill="#ffd93d"/>
+  <circle cx="80" cy="28" r="1.5" fill="#ff6b6b"/>
+  <circle cx="98" cy="34" r="1.5" fill="#ffd93d"/>
+</svg>

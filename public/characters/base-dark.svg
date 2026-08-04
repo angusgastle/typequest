@@ -1,0 +1,16 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Short hair -->
+  <path d="M 52 48 Q 52 22 80 22 Q 108 22 108 48 Q 80 40 52 48 Z" fill="#1a1a1a"/>
+  <!-- Head -->
+  <circle cx="80" cy="50" r="28" fill="#8b5a2b"/>
+  <!-- Body (green shirt) -->
+  <rect x="60" y="80" width="40" height="50" fill="#6bcb77" rx="5"/>
+  <!-- Arms -->
+  <rect x="30" y="85" width="30" height="12" fill="#8b5a2b" rx="6"/>
+  <rect x="100" y="85" width="30" height="12" fill="#8b5a2b" rx="6"/>
+  <!-- Eyes -->
+  <circle cx="72" cy="45" r="3" fill="black"/>
+  <circle cx="88" cy="45" r="3" fill="black"/>
+  <!-- Smile -->
+  <path d="M 75 55 Q 80 58 85 55" stroke="black" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

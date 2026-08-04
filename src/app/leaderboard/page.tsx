@@ -96,14 +96,7 @@ export default function LeaderboardPage() {
 												{i < 3 ? MEDALS[i] : `#${i + 1}`}
 											</div>
 											<CharacterAvatar
-												equipped={
-													row.equipped ?? {
-														base: "base-boy",
-														hat: null,
-														outfit: null,
-														weapon: null,
-													}
-												}
+												equipped={row.equipped ?? {}}
 												size="sm"
 											/>
 											<div className="flex-1 font-display font-bold">

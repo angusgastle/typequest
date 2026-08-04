@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getServerSupabase, hasSupabase } from "@/lib/supabase-server";
-import { avatarFor } from "@/lib/utils";
 
 export async function GET(req: Request) {
 	const url = new URL(req.url);
@@ -54,7 +53,6 @@ export async function GET(req: Request) {
 			kid_id: k.id,
 			nickname: k.nickname || k.first_name,
 			first_name: k.first_name,
-			avatar: k.avatar || avatarFor(k.first_name),
 			equipped: k.equipped ?? null,
 			wpm,
 			accuracy,

@@ -22,10 +22,10 @@ export default function LoginPage() {
 		if (pin.length !== 4) return setError("Your PIN is 4 numbers.");
 		setLoading(true);
 		try {
-			const session = await login(name.trim(), pin);
+			const { session, isNew } = await login(name.trim(), pin);
 			setSession(session);
 			window.dispatchEvent(new Event("tq-session-changed"));
-			router.push("/adventure");
+			router.push(isNew ? "/onboarding" : "/adventure");
 		} catch (err: any) {
 			setError(err.message || "Something went wrong.");
 			setLoading(false);

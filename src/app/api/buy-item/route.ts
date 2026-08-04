@@ -62,8 +62,6 @@ export async function POST(req: Request) {
 			name: kid.first_name,
 			level: kid.level ?? 1,
 			cumulativeScore: kid.cumulative_score ?? 0,
-			avatar: kid.avatar ?? null,
-			avatarColor: kid.avatar_color ?? "#ff6b6b",
 			coins: newCoins,
 			equipped: kid.equipped ?? {
 				base: "base-boy",

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { getItem } from "@/lib/items";
 
@@ -13,6 +13,7 @@ export function CharacterAvatar({
 	equipped,
 	size = "md",
 }: CharacterAvatarProps) {
+	const reduceMotion = useReducedMotion();
 	const sizeMap = {
 		sm: { container: "w-10 h-10", canvas: 40 },
 		md: { container: "w-20 h-20", canvas: 80 },
@@ -24,7 +25,9 @@ export function CharacterAvatar({
 	const slots = ["base", "outfit", "weapon", "hat"];
 	const layers = slots
 		.map((slot) => {
-			const itemId = equipped[slot];
+			let itemId = equipped[slot];
+			// The base slot must always have a body.
+			if (slot === "base" && !itemId) itemId = "base-boy";
 			if (!itemId) return null;
 			const item = getItem(itemId);
 			return item;
@@ -36,7 +39,9 @@ export function CharacterAvatar({
 		return (
 			<motion.div
 				className={`${config.container} rounded-full bg-cream flex items-center justify-center overflow-hidden`}
-				animate={{ y: [0, -3, 0], rotate: [0, -1, 1, 0] }}
+				animate={
+					reduceMotion ? undefined : { y: [0, -3, 0], rotate: [0, -1, 1, 0] }
+				}
 				transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
 			>
 				<span className="text-2xl">❓</span>
@@ -47,7 +52,9 @@ export function CharacterAvatar({
 	return (
 		<motion.div
 			className={`${config.container} relative inline-block overflow-hidden rounded-full bg-cream`}
-			animate={{ y: [0, -3, 0], rotate: [0, -1, 1, 0] }}
+			animate={
+				reduceMotion ? undefined : { y: [0, -3, 0], rotate: [0, -1, 1, 0] }
+			}
 			transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
 		>
 			{layers.map((item, idx) => (
@@ -61,7 +68,6 @@ export function CharacterAvatar({
 						zIndex: idx,
 						objectFit: "contain",
 					}}
-					priority
 				/>
 			))}
 		</motion.div>

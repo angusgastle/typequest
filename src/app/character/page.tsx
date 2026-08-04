@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
@@ -173,7 +174,8 @@ export default function CharacterPage() {
 						{/* Items grid */}
 						<div className="grid grid-cols-2 gap-3">
 							{itemsInSlot.map((item) => {
-								const isOwned = session.ownedItems.includes(item.id);
+								const isOwned =
+									session.ownedItems.includes(item.id) || item.cost === 0;
 								const isEquipped = session.equipped[item.slot] === item.id;
 								return (
 									<motion.div
@@ -188,12 +190,26 @@ export default function CharacterPage() {
 													: "bg-ink/5 border-white/50 opacity-75"
 										}`}
 									>
+										<div className="flex justify-center mb-2">
+											<div className="w-16 h-16 relative">
+												<Image
+													src={item.imageUrl}
+													alt={item.name}
+													fill
+													style={{ objectFit: "contain" }}
+												/>
+											</div>
+										</div>
 										<div className="text-sm font-display font-bold mb-2">
 											{item.name}
 										</div>
 										{isOwned ? (
 											isEquipped ? (
-												<>
+												item.slot === "base" ? (
+													<div className="rounded-xl px-4 py-2 text-sm font-display font-bold bg-teal/20 text-teal text-center">
+														✓ Equipped
+													</div>
+												) : (
 													<Button
 														size="sm"
 														variant="secondary"
@@ -202,7 +218,7 @@ export default function CharacterPage() {
 													>
 														✓ Equipped
 													</Button>
-												</>
+												)
 											) : (
 												<Button
 													size="sm"

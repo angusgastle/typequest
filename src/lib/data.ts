@@ -5,7 +5,7 @@ import type {
 	TestContent,
 	TestResult,
 } from "./types";
-import { avatarFor, getTier, today, yesterday } from "./utils";
+import { getTier, today, yesterday } from "./utils";
 
 /**
  * Data access layer.
@@ -40,8 +40,6 @@ export function getSession(): Session | null {
 		name: parsed.name,
 		level: parsed.level,
 		cumulativeScore: parsed.cumulativeScore,
-		avatar: parsed.avatar ?? null,
-		avatarColor: parsed.avatarColor ?? "#ff6b6b",
 		coins: parsed.coins ?? 0,
 		equipped: parsed.equipped ?? {
 			base: "base-boy",
@@ -64,7 +62,10 @@ export function setSession(s: Session | null): void {
 // ---------------------------------------------------------------------------
 // Login: name + PIN
 // ---------------------------------------------------------------------------
-export async function login(name: string, pin: string): Promise<Session> {
+export async function login(
+	name: string,
+	pin: string,
+): Promise<{ session: Session; isNew: boolean }> {
 	if (isDemo) return demoLogin(name, pin);
 	const res = await fetch("/api/login", {
 		method: "POST",
@@ -77,22 +78,23 @@ export async function login(name: string, pin: string): Promise<Session> {
 	}
 	const data = await res.json();
 	return {
-		kidId: data.kidId,
-		name: data.name,
-		level: data.level,
-		cumulativeScore: data.cumulativeScore,
-		avatar: data.avatar ?? null,
-		avatarColor: data.avatarColor ?? "#ff6b6b",
-		coins: data.coins ?? 0,
-		equipped: data.equipped ?? {
-			base: "base-boy",
-			hat: null,
-			outfit: null,
-			weapon: null,
+		session: {
+			kidId: data.kidId,
+			name: data.name,
+			level: data.level,
+			cumulativeScore: data.cumulativeScore,
+			coins: data.coins ?? 0,
+			equipped: data.equipped ?? {
+				base: "base-boy",
+				hat: null,
+				outfit: null,
+				weapon: null,
+			},
+			ownedItems: data.ownedItems ?? ["base-boy", "base-girl"],
+			streak: data.streak ?? 0,
+			lastQuizDate: data.lastQuizDate ?? null,
 		},
-		ownedItems: data.ownedItems ?? ["base-boy", "base-girl"],
-		streak: data.streak ?? 0,
-		lastQuizDate: data.lastQuizDate ?? null,
+		isNew: Boolean(data.isNew),
 	};
 }
 
@@ -136,8 +138,6 @@ export async function submitTest(
 			name: data.kid.name,
 			level: data.kid.level,
 			cumulativeScore: data.kid.cumulativeScore,
-			avatar: data.kid.avatar ?? null,
-			avatarColor: data.kid.avatarColor ?? "#ff6b6b",
 			coins: data.kid.coins ?? 0,
 			equipped: data.kid.equipped ?? {
 				base: "base-boy",
@@ -154,13 +154,11 @@ export async function submitTest(
 }
 
 // ---------------------------------------------------------------------------
-// Update kid profile (avatar, color, name)
+// Update kid profile (name, coins, equipped, owned)
 // ---------------------------------------------------------------------------
 export async function updateKid(
 	kidId: string,
 	updates: {
-		avatar?: string;
-		avatarColor?: string;
 		firstName?: string;
 		coins?: number;
 		equipped?: Record<string, string | null>;
@@ -180,8 +178,6 @@ export async function updateKid(
 		name: data.kid.name,
 		level: data.kid.level,
 		cumulativeScore: data.kid.cumulativeScore,
-		avatar: data.kid.avatar ?? null,
-		avatarColor: data.kid.avatarColor ?? "#ff6b6b",
 		coins: data.kid.coins ?? 0,
 		equipped: data.kid.equipped ?? {
 			base: "base-boy",
@@ -263,8 +259,6 @@ export async function buyItem(kidId: string, itemId: string): Promise<Session> {
 		name: data.kid.name,
 		level: data.kid.level,
 		cumulativeScore: data.kid.cumulativeScore,
-		avatar: data.kid.avatar ?? null,
-		avatarColor: data.kid.avatarColor ?? "#ff6b6b",
 		coins: data.kid.coins ?? 0,
 		equipped: data.kid.equipped ?? {
 			base: "base-boy",
@@ -302,8 +296,6 @@ export async function equipItem(
 		name: data.kid.name,
 		level: data.kid.level,
 		cumulativeScore: data.kid.cumulativeScore,
-		avatar: data.kid.avatar ?? null,
-		avatarColor: data.kid.avatarColor ?? "#ff6b6b",
 		coins: data.kid.coins ?? 0,
 		equipped: data.kid.equipped ?? {
 			base: "base-boy",
@@ -350,8 +342,6 @@ function loadKids(): Record<string, DemoKid> {
 	// Backward compatibility — fill new fields with defaults
 	for (const id of Object.keys(kids)) {
 		const k = kids[id];
-		if (k.avatar === undefined) k.avatar = null;
-		if (k.avatar_color === undefined) k.avatar_color = "#ff6b6b";
 		if (k.coins === undefined) k.coins = 0;
 		if (k.equipped === undefined)
 			k.equipped = { base: "base-boy", hat: null, outfit: null, weapon: null };
@@ -394,18 +384,23 @@ function uid() {
 	return `id-${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
 }
 
-function demoLogin(name: string, pin: string): Session {
+function demoLogin(
+	name: string,
+	pin: string,
+): { session: Session; isNew: boolean } {
 	const kids = loadKids();
 	const existing = Object.values(kids).find(
 		(k) => k.first_name.toLowerCase() === name.trim().toLowerCase(),
 	);
 	let kid: DemoKid;
+	let isNew = false;
 	if (existing) {
 		if (existing.pin !== pin) {
 			throw new Error("Wrong PIN! Ask a grown-up for help.");
 		}
 		kid = existing;
 	} else {
+		isNew = true;
 		kid = {
 			id: uid(),
 			first_name: name.trim(),
@@ -417,8 +412,6 @@ function demoLogin(name: string, pin: string): Session {
 			tests_complete: 0,
 			level: 1,
 			cumulative_score: 0,
-			avatar: null,
-			avatar_color: "#ff6b6b",
 			coins: 0,
 			equipped: { base: "base-boy", hat: null, outfit: null, weapon: null },
 			owned_items: ["base-boy", "base-girl"],
@@ -437,8 +430,6 @@ function demoLogin(name: string, pin: string): Session {
 		name: kid.first_name,
 		level: tier.level,
 		cumulativeScore: kid.cumulative_score,
-		avatar: kid.avatar,
-		avatarColor: kid.avatar_color,
 		coins: kid.coins,
 		equipped: kid.equipped,
 		ownedItems: kid.owned_items,
@@ -446,7 +437,7 @@ function demoLogin(name: string, pin: string): Session {
 		lastQuizDate: kid.last_quiz_date,
 	};
 	setSession(session);
-	return session;
+	return { session, isNew };
 }
 
 function demoSubmit(
@@ -517,8 +508,6 @@ function demoSubmit(
 		name: kid.first_name,
 		level: tier.level,
 		cumulativeScore: newCumulativeScore,
-		avatar: kid.avatar,
-		avatarColor: kid.avatar_color,
 		coins: kid.coins,
 		equipped: kid.equipped,
 		ownedItems: kid.owned_items,
@@ -532,8 +521,6 @@ function demoSubmit(
 function demoUpdateKid(
 	kidId: string,
 	updates: {
-		avatar?: string;
-		avatarColor?: string;
 		firstName?: string;
 		coins?: number;
 		equipped?: Record<string, string | null>;
@@ -544,8 +531,6 @@ function demoUpdateKid(
 	const kid = kids[kidId];
 	if (!kid) throw new Error("Kid not found");
 
-	if (updates.avatar !== undefined) kid.avatar = updates.avatar;
-	if (updates.avatarColor !== undefined) kid.avatar_color = updates.avatarColor;
 	if (updates.firstName !== undefined) kid.first_name = updates.firstName;
 	if (updates.coins !== undefined) kid.coins = updates.coins;
 	if (updates.equipped !== undefined) kid.equipped = updates.equipped;
@@ -560,8 +545,6 @@ function demoUpdateKid(
 		name: kid.first_name,
 		level: currentSession?.level ?? 1,
 		cumulativeScore: currentSession?.cumulativeScore ?? 0,
-		avatar: kid.avatar,
-		avatarColor: kid.avatar_color,
 		coins: kid.coins,
 		equipped: kid.equipped,
 		ownedItems: kid.owned_items,
@@ -676,7 +659,6 @@ function demoLeaderboard(scope: "week" | "all"): LeaderboardRow[] {
 			kid_id: kid.id,
 			nickname: kid.nickname || kid.first_name,
 			first_name: kid.first_name,
-			avatar: kid.avatar || avatarFor(kid.first_name),
 			equipped: kid.equipped ?? null,
 			wpm,
 			accuracy,
@@ -788,8 +770,6 @@ function demoBuyItem(kidId: string, itemId: string): Session {
 		name: kid.first_name,
 		level: currentSession?.level ?? 1,
 		cumulativeScore: currentSession?.cumulativeScore ?? 0,
-		avatar: kid.avatar,
-		avatarColor: kid.avatar_color,
 		coins: kid.coins,
 		equipped: kid.equipped,
 		ownedItems: kid.owned_items,
@@ -810,12 +790,19 @@ function demoEquipItem(
 	const kid = kids[kidId];
 	if (!kid) throw new Error("Kid not found");
 
+	// The base slot must always have a body — it can be swapped, never cleared.
+	if (slot === "base" && itemId === null) {
+		throw new Error("Base cannot be removed");
+	}
+
 	// Validate ownership
 	if (itemId !== null) {
 		const item = getItem(itemId);
 		if (!item) throw new Error("Item not found");
 		if (item.slot !== slot) throw new Error("Item slot mismatch");
-		if (!kid.owned_items.includes(itemId)) throw new Error("Item not owned");
+		// Free items (cost 0) are always ownable, regardless of owned_items.
+		if (item.cost !== 0 && !kid.owned_items.includes(itemId))
+			throw new Error("Item not owned");
 	}
 
 	kid.equipped[slot] = itemId;
@@ -829,8 +816,6 @@ function demoEquipItem(
 		name: kid.first_name,
 		level: currentSession?.level ?? 1,
 		cumulativeScore: currentSession?.cumulativeScore ?? 0,
-		avatar: kid.avatar,
-		avatarColor: kid.avatar_color,
 		coins: kid.coins,
 		equipped: kid.equipped,
 		ownedItems: kid.owned_items,

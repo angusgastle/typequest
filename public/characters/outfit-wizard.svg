@@ -1,0 +1,10 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Robe -->
+  <path d="M 60 80 L 48 132 Q 80 138 112 132 L 100 80 Z" fill="#4b0082" stroke="black" stroke-width="1"/>
+  <!-- Gold trim -->
+  <path d="M 48 132 Q 80 138 112 132 L 110 128 Q 80 134 50 128 Z" fill="#ffd93d"/>
+  <!-- Stars -->
+  <text x="80" y="100" font-size="14" fill="#ffd93d" text-anchor="middle">★</text>
+  <text x="68" y="118" font-size="10" fill="#ffd93d" text-anchor="middle">✦</text>
+  <text x="92" y="118" font-size="10" fill="#ffd93d" text-anchor="middle">✦</text>
+</svg>

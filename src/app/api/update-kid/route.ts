@@ -9,8 +9,6 @@ export async function PATCH(req: Request) {
 	}
 
 	const updates: Record<string, unknown> = {};
-	if (body.avatar !== undefined) updates.avatar = body.avatar;
-	if (body.avatarColor !== undefined) updates.avatar_color = body.avatarColor;
 	if (body.firstName !== undefined) updates.first_name = body.firstName;
 	if (body.coins !== undefined) updates.coins = body.coins;
 	if (body.equipped !== undefined) updates.equipped = body.equipped;
@@ -46,8 +44,6 @@ export async function PATCH(req: Request) {
 			name: kid?.first_name,
 			level: kid?.level ?? 1,
 			cumulativeScore: kid?.cumulative_score ?? 0,
-			avatar: kid?.avatar ?? null,
-			avatarColor: kid?.avatar_color ?? "#ff6b6b",
 			coins: kid?.coins ?? 0,
 			equipped: kid?.equipped ?? {
 				base: "base-boy",
