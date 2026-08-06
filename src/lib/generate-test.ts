@@ -1,7 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { TestContent } from "./types";
 
-const HAIKU_MODEL = "claude-haiku-4-5-20251001";
+// Wafer hosts the Anthropic-compatible endpoint (ANTHROPIC_BASE_URL points at
+// pass.wafer.ai), so the model id is a Wafer model, not a Claude one. Allow an
+// explicit override via env; default to GLM-5.2.
+const WAFER_MODEL = process.env.WAFER_MODEL || "GLM-5.2";
 
 /**
  * Local test generator — used as a fallback when the Anthropic API key isn't
@@ -51,10 +54,13 @@ function getSeason(): string {
 
 /** Map absolute level (1-30) to a 5-tier difficulty index. */
 function difficultyForLevel(level: number): number {
-	if (level <= 2) return 1;
-	if (level <= 4) return 2;
-	if (level <= 7) return 3;
-	if (level <= 11) return 4;
+	// Even ramp across all 30 levels (6 per tier): Bronze (the youngest
+	// learners) stays in tier 1 for its whole run, and the hardest text is
+	// reserved for the top metals instead of flattening out at Gold 2.
+	if (level <= 6) return 1;
+	if (level <= 12) return 2;
+	if (level <= 18) return 3;
+	if (level <= 24) return 4;
 	return 5;
 }
 
@@ -134,7 +140,7 @@ Use Canadian spelling (colour, behaviour, centre, honour, favourite, neighbour, 
 
 	try {
 		const response = await client.messages.create({
-			model: HAIKU_MODEL,
+			model: WAFER_MODEL,
 			max_tokens: 400,
 			system: systemPrompt,
 			messages: [{ role: "user", content: userPrompt }],

@@ -372,11 +372,11 @@ async function runTest(
 
 function getLevelRangeForTier(tier: number): string {
 	const ranges: Record<number, string> = {
-		1: "1-2",
-		2: "3-4",
-		3: "5-7",
-		4: "8-11",
-		5: "12-30",
+		1: "1-6",
+		2: "7-12",
+		3: "13-18",
+		4: "19-24",
+		5: "25-30",
 	};
 	return ranges[tier] || "";
 }
