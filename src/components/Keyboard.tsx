@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 // Keyboard layout rows. `finger` maps a key to the finger that presses it.
 // fingers: lp=left pinky, lr=left ring, lm=left middle, li=left index,
 //          ri=right index, rm=right middle, rr=right ring, rp=right pinky, th=thumb
-interface KeyDef {
+export interface KeyDef {
 	label: string;
 	code: string;
 	finger: string;
@@ -14,7 +14,7 @@ interface KeyDef {
 	w?: number; // width multiplier
 }
 
-const ROWS: KeyDef[][] = [
+export const ROWS: KeyDef[][] = [
 	[
 		{ label: "Q", code: "KeyQ", finger: "lp" },
 		{ label: "W", code: "KeyW", finger: "lr" },
@@ -52,7 +52,7 @@ const ROWS: KeyDef[][] = [
 	],
 ];
 
-const FINGER_COLORS: Record<string, string> = {
+export const FINGER_COLORS: Record<string, string> = {
 	lp: "#ff6b6b",
 	lr: "#ffd93d",
 	lm: "#6bcb77",
@@ -70,7 +70,7 @@ interface KeyboardProps {
 	state: "correct" | "wrong" | null;
 }
 
-function charToKey(char: string | null): KeyDef | null {
+export function charToKey(char: string | null): KeyDef | null {
 	if (!char) return null;
 	const c = char === " " ? " " : char;
 	for (const row of ROWS) {

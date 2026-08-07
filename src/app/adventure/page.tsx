@@ -2,18 +2,28 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BackgroundBlobs } from "@/components/BackgroundBlobs";
 import { Confetti } from "@/components/Confetti";
 import { Keyboard } from "@/components/Keyboard";
 import { NavBar } from "@/components/NavBar";
+import { RoadblockOverlay } from "@/components/RoadblockOverlay";
 import { TypingTest } from "@/components/TypingTest";
 import { Button } from "@/components/ui";
-import { generateTest, getSession, setSession, submitTest } from "@/lib/data";
-import type { Session, TestContent, TestResult } from "@/lib/types";
+import {
+	generateTest,
+	getKeyMastery,
+	getSession,
+	setSession,
+	submitTest,
+	updateKid,
+	updateKeyMastery,
+} from "@/lib/data";
+import { markRoadblockFired, shouldFireRoadblock } from "@/lib/roadblock";
+import type { KeyMastery, Session, TestContent, TestResult } from "@/lib/types";
 import { getTier } from "@/lib/utils";
 
-type Phase = "intro" | "generating" | "playing" | "result";
+type Phase = "intro" | "generating" | "playing" | "result" | "roadblock";
 
 export default function AdventurePage() {
 	const router = useRouter();
@@ -23,6 +33,8 @@ export default function AdventurePage() {
 	const [content, setContent] = useState<TestContent | null>(null);
 	const [result, setResult] = useState<TestResult | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [mastery, setMastery] = useState<KeyMastery>({});
+	const nextContentRef = useRef<TestContent | null>(null);
 
 	useEffect(() => {
 		const s = getSession();
@@ -32,6 +44,9 @@ export default function AdventurePage() {
 		}
 		setSess(s);
 		setReady(true);
+		getKeyMastery(s.kidId)
+			.then(setMastery)
+			.catch(() => {});
 	}, [router]);
 
 	const startTest = async () => {
@@ -45,6 +60,44 @@ export default function AdventurePage() {
 		} catch {
 			setError("Could not start your adventure. Try again!");
 			setPhase("intro");
+		}
+	};
+
+	// Pre-fetch the next adventure during a roadblock so the kid isn't waiting
+	// on a round-trip after the drill.
+	const prepareNextAdventure = async () => {
+		if (!session) return;
+		try {
+			const c = await generateTest(session.kidId, session.level, session.name);
+			nextContentRef.current = c;
+			setContent(c);
+		} catch {
+			// Leave null — handleRoadblockComplete falls back to startTest.
+		}
+	};
+
+	const handleRoadblockComplete = (
+		coinsEarned: number,
+		masteryDelta: KeyMastery,
+	) => {
+		if (session) {
+			const newCoins = session.coins + coinsEarned;
+			setSess((s) => (s ? { ...s, coins: newCoins } : s));
+			updateKid(session.kidId, { coins: newCoins })
+				.then(() => window.dispatchEvent(new Event("tq-session-changed")))
+				.catch(() => {});
+			if (masteryDelta && Object.keys(masteryDelta).length > 0) {
+				updateKeyMastery(session.kidId, masteryDelta)
+					.then(setMastery)
+					.catch(() => {});
+			}
+		}
+		// Hand off to the next adventure.
+		if (nextContentRef.current) {
+			setContent(nextContentRef.current);
+			setPhase("playing");
+		} else {
+			startTest();
 		}
 	};
 
@@ -123,13 +176,27 @@ export default function AdventurePage() {
 							result={result}
 							onAgain={() => {
 								setResult(null);
-								startTest();
+								nextContentRef.current = null;
+								if (session && shouldFireRoadblock(session, mastery)) {
+									markRoadblockFired();
+									setPhase("roadblock");
+									prepareNextAdventure();
+								} else {
+									startTest();
+								}
 							}}
 							onHome={() => setPhase("intro")}
 						/>
 					)}
 				</AnimatePresence>
 			</main>
+			{phase === "roadblock" && session && (
+				<RoadblockOverlay
+					level={session.level}
+					mastery={mastery}
+					onComplete={handleRoadblockComplete}
+				/>
+			)}
 		</div>
 	);
 }

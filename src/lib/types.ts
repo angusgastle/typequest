@@ -76,6 +76,9 @@ export interface Adventure {
 	difficulty: number;
 }
 
+/** Per-key typing mastery, keyed by lowercase key label (e.g. "a", ";"). */
+export type KeyMastery = Record<string, { attempts: number; correct: number }>;
+
 export type Slot = "base" | "hat" | "outfit" | "weapon";
 
 export interface Item {

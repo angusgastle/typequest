@@ -67,6 +67,18 @@ create table if not exists public.kid_seen_adventures (
 
 create index if not exists kid_seen_adventures_kid_id_idx on public.kid_seen_adventures (kid_id);
 
+-- Per-key typing mastery (home-row drill progress)
+create table if not exists public.key_mastery (
+  kid_id      uuid not null references public.kids(id) on delete cascade,
+  key_label   text not null,            -- "a","s","d","f","j","k","l",";"
+  attempts    integer not null default 0,
+  correct     integer not null default 0,
+  last_updated timestamptz not null default now(),
+  primary key (kid_id, key_label)
+);
+
+create index if not exists key_mastery_kid_id_idx on public.key_mastery (kid_id);
+
 -- Updated timestamp trigger
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
@@ -91,6 +103,7 @@ alter table public.kids enable row level security;
 alter table public.tests enable row level security;
 alter table public.adventures enable row level security;
 alter table public.kid_seen_adventures enable row level security;
+alter table public.key_mastery enable row level security;
 
 -- Demo policy: anon key can read/write. Tighten for production.
 create policy "kids_public_read" on public.kids for select using (true);
@@ -106,3 +119,7 @@ create policy "adventures_public_insert" on public.adventures for insert with ch
 
 create policy "kid_seen_adventures_public_read" on public.kid_seen_adventures for select using (true);
 create policy "kid_seen_adventures_public_insert" on public.kid_seen_adventures for insert with check (true);
+
+create policy "key_mastery_public_read" on public.key_mastery for select using (true);
+create policy "key_mastery_public_insert" on public.key_mastery for insert with check (true);
+create policy "key_mastery_public_update" on public.key_mastery for update using (true);

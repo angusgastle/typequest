@@ -1,5 +1,6 @@
 import type {
 	Kid,
+	KeyMastery,
 	LeaderboardRow,
 	Session,
 	TestContent,
@@ -20,6 +21,7 @@ const SESSION_KEY = "tq_session";
 const KIDS_KEY = "tq_kids";
 const TESTS_KEY = "tq_tests";
 const ADVENTURES_KEY = "tq_adventures";
+const MASTERY_KEY = "tq_key_mastery";
 
 export const isDemo = !(
 	process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -309,6 +311,31 @@ export async function equipItem(
 	};
 }
 
+// ---------------------------------------------------------------------------
+// Per-key mastery (home-row drill progress)
+// ---------------------------------------------------------------------------
+export async function getKeyMastery(kidId: string): Promise<KeyMastery> {
+	if (isDemo) return demoGetKeyMastery(kidId);
+	const res = await fetch(`/api/key-mastery?kidId=${kidId}`);
+	if (!res.ok) return {};
+	return res.json();
+}
+
+/** Merge a per-key delta into stored mastery. */
+export async function updateKeyMastery(
+	kidId: string,
+	delta: KeyMastery,
+): Promise<KeyMastery> {
+	if (isDemo) return demoUpdateKeyMastery(kidId, delta);
+	const res = await fetch("/api/key-mastery", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ kidId, delta }),
+	});
+	if (!res.ok) return {};
+	return res.json();
+}
+
 // ===========================================================================
 // DEMO MODE (localStorage) — no backend required
 // ===========================================================================
@@ -375,9 +402,18 @@ function loadAdventures(): DemoAdventure[] {
 	const raw = localStorage.getItem(ADVENTURES_KEY) || "[]";
 	return JSON.parse(raw);
 }
+function loadAllMastery(): Record<string, KeyMastery> {
+	if (typeof window === "undefined") return {};
+	const raw = localStorage.getItem(MASTERY_KEY) || "{}";
+	return JSON.parse(raw);
+}
 function saveAdventures(adventures: DemoAdventure[]) {
 	if (typeof window !== "undefined")
 		localStorage.setItem(ADVENTURES_KEY, JSON.stringify(adventures));
+}
+function saveAllMastery(all: Record<string, KeyMastery>) {
+	if (typeof window !== "undefined")
+		localStorage.setItem(MASTERY_KEY, JSON.stringify(all));
 }
 
 function uid() {
@@ -827,4 +863,25 @@ function demoEquipItem(
 	};
 	setSession(session);
 	return session;
+}
+
+function demoGetKeyMastery(kidId: string): KeyMastery {
+	const all = loadAllMastery();
+	return all[kidId] ?? {};
+}
+
+function demoUpdateKeyMastery(kidId: string, delta: KeyMastery): KeyMastery {
+	const all = loadAllMastery();
+	const current = all[kidId] ?? {};
+	for (const key of Object.keys(delta)) {
+		const d = delta[key];
+		const c = current[key] ?? { attempts: 0, correct: 0 };
+		current[key] = {
+			attempts: c.attempts + d.attempts,
+			correct: c.correct + d.correct,
+		};
+	}
+	all[kidId] = current;
+	saveAllMastery(all);
+	return current;
 }
