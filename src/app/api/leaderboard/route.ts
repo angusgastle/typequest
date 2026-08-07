@@ -56,7 +56,15 @@ export async function GET(req: Request) {
 			equipped: k.equipped ?? null,
 			wpm,
 			accuracy,
-			score: s ? s.score : 0,
+			// "All time" uses the kid's cumulative_score (streak penalties already
+			// applied) so it matches the total shown in the nav. "Week" sums the raw
+			// test scores earned in the window.
+			score:
+				scope === "all"
+					? ((k.cumulative_score as number) ?? 0)
+					: s
+						? s.score
+						: 0,
 			rank: 0,
 		};
 	});

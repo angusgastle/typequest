@@ -61,6 +61,11 @@ export default function LeaderboardPage() {
 						</button>
 					))}
 				</div>
+				<p className="mt-3 text-center font-display text-sm text-ink/50">
+					{scope === "week"
+						? "Points earned in the last 7 days"
+						: "Total points (all time)"}
+				</p>
 
 				<div className="mt-6">
 					{loading ? (

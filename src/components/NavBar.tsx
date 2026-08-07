@@ -2,10 +2,10 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { CharacterAvatar } from "@/components/CharacterAvatar";
-import { getSession, setSession } from "@/lib/data";
+import { setSession as clearStoredSession, getSession } from "@/lib/data";
 import type { Session } from "@/lib/types";
 import { cn, getTier } from "@/lib/utils";
 
@@ -18,6 +18,7 @@ const links = [
 
 export function NavBar() {
 	const pathname = usePathname();
+	const router = useRouter();
 	const [session, setSession] = useState<Session | null>(null);
 	const [mounted, setMounted] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -48,9 +49,11 @@ export function NavBar() {
 	}, []);
 
 	const logout = () => {
-		setSession(null);
+		clearStoredSession(null); // remove from localStorage
+		setSession(null); // clear React state
 		window.dispatchEvent(new Event("tq-session-changed"));
 		setMenuOpen(false);
+		router.push("/");
 	};
 
 	if (!mounted) return <nav className="h-20" />;
@@ -109,6 +112,7 @@ export function NavBar() {
 							<span className="tabular-nums">
 								{session.cumulativeScore.toLocaleString()}
 							</span>
+							<span className="text-xs font-bold text-ink/40 ml-1">total</span>
 						</motion.div>
 					)}
 					{session ? (

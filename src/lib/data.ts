@@ -662,7 +662,10 @@ function demoLeaderboard(scope: "week" | "all"): LeaderboardRow[] {
 			equipped: kid.equipped ?? null,
 			wpm,
 			accuracy,
-			score,
+			// "All time" mirrors the kid's cumulative_score (streak penalties
+			// already applied) so it matches the total shown in the nav. "Week"
+			// uses the raw sum of test scores earned in the window.
+			score: scope === "all" ? kid.cumulative_score : score,
 			rank: 0,
 		});
 	}
