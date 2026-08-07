@@ -1,12 +1,12 @@
 <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
   <!-- Crown band (seated at head crown) -->
-  <ellipse cx="80" cy="42" rx="28" ry="8" fill="#ffd700" stroke="gold" stroke-width="2"/>
+  <ellipse cx="80" cy="32" rx="28" ry="6" fill="#ffd700" stroke="gold" stroke-width="2"/>
   <!-- Spikes -->
-  <path d="M 60 42 L 55 22 L 65 38 Z" fill="#ffd700" stroke="gold" stroke-width="1"/>
-  <path d="M 80 42 L 80 17 L 85 38 Z" fill="#ffd700" stroke="gold" stroke-width="1"/>
-  <path d="M 100 42 L 105 22 L 95 38 Z" fill="#ffd700" stroke="gold" stroke-width="1"/>
+  <path d="M 60 32 L 55 12 L 65 28 Z" fill="#ffd700" stroke="gold" stroke-width="1"/>
+  <path d="M 80 32 L 80 7 L 85 28 Z" fill="#ffd700" stroke="gold" stroke-width="1"/>
+  <path d="M 100 32 L 105 12 L 95 28 Z" fill="#ffd700" stroke="gold" stroke-width="1"/>
   <!-- Jewels -->
-  <circle cx="65" cy="35" r="3" fill="#ff1493"/>
-  <circle cx="80" cy="27" r="3" fill="#00bfff"/>
-  <circle cx="95" cy="35" r="3" fill="#ff1493"/>
+  <circle cx="65" cy="25" r="3" fill="#ff1493"/>
+  <circle cx="80" cy="17" r="3" fill="#00bfff"/>
+  <circle cx="95" cy="25" r="3" fill="#ff1493"/>
 </svg>
