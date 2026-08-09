@@ -1,8 +1,8 @@
 <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
-  <!-- Wand stick -->
-  <rect x="78" y="55" width="6" height="70" fill="#8b4513" stroke="black" stroke-width="1" rx="3"/>
+  <!-- Wand stick (held in the right hand) -->
+  <rect x="112" y="40" width="6" height="70" fill="#8b4513" stroke="black" stroke-width="1" rx="3"/>
   <!-- Star tip -->
-  <polygon points="81,28 84,38 94,38 86,44 89,54 81,48 73,54 76,44 68,38 78,38" fill="#ffd93d" stroke="black" stroke-width="1"/>
+  <polygon points="115,28 118,40 128,40 120,46 123,56 115,50 107,56 110,46 102,40 112,40" fill="#ffd93d" stroke="black" stroke-width="1"/>
   <!-- Sparkle -->
-  <text x="100" y="40" font-size="10" fill="#ffd93d">✨</text>
+  <text x="135" y="42" font-size="10" fill="#ffd93d">✨</text>
 </svg>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Avatar Mount Verification</title>
+<style>
+  :root{ color-scheme: light; }
+  body{ font-family: ui-sans-serif, system-ui, sans-serif; background:#f4f4ee; margin:0; padding:24px; }
+  h1{ font-size:20px; margin:0 0 4px; }
+  h2{ font-size:15px; margin:24px 0 8px; border-bottom:1px solid #ddd; padding-bottom:4px; }
+  .row{ display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; }
+  .cell{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .label{ font-size:11px; color:#666; text-align:center; max-width:110px; word-break:break-word; }
+  .sizes{ display:flex; gap:6px; align-items:flex-end; background:#fff; padding:8px; border-radius:12px; border:1px solid #e3e3d8;}
+  .avatar{
+    position:relative; overflow:hidden; border-radius:9999px; background:#fbf6e9;
+    display:inline-block;
+  }
+  .avatar svg, .avatar > svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .avatar .layer{ position:absolute; inset:0; width:100%; height:100%; }
+  .layer svg{ width:100%; height:100%; display:block; }
+  .notes{ background:#fff8e0; border:1px solid #e8d98a; padding:10px 14px; border-radius:8px; font-size:13px; max-width:760px; }
+</style>
+</head>
+<body>
+<h1>Character Avatar — Mount Verification</h1>
+<div class="notes">
+  Every avatar below uses the exact <code>CharacterAvatar</code> recipe: a square, <code>rounded-full</code>, <code>overflow-hidden</code> container with stacked layers at <code>object-fit: contain</code>, z-order base → outfit → weapon → hat. Weapons should sit at the right hand (~x115), hats on the head top (~y22), outfits over the torso.
+</div>
+<div id="app"></div>
+
+<script>
+const SVG = {};
+SVG["base-boy"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Head --> <circle cx=\"80\" cy=\"50\" r=\"28\" fill=\"#f4a460\"/> <!-- Body --> <rect x=\"60\" y=\"80\" width=\"40\" height=\"50\" fill=\"#87ceeb\" rx=\"5\"/> <!-- Arms --> <rect x=\"30\" y=\"85\" width=\"30\" height=\"12\" fill=\"#f4a460\" rx=\"6\"/> <rect x=\"100\" y=\"85\" width=\"30\" height=\"12\" fill=\"#f4a460\" rx=\"6\"/> <!-- Eyes --> <circle cx=\"72\" cy=\"45\" r=\"3\" fill=\"black\"/> <circle cx=\"88\" cy=\"45\" r=\"3\" fill=\"black\"/> <!-- Smile --> <path d=\"M 75 55 Q 80 58 85 55\" stroke=\"black\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/> </svg>";
+SVG["base-girl"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Hair --> <ellipse cx=\"80\" cy=\"35\" rx=\"32\" ry=\"26\" fill=\"#ff69b4\"/> <!-- Head --> <circle cx=\"80\" cy=\"50\" r=\"28\" fill=\"#f4a460\"/> <!-- Body (dress) --> <path d=\"M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z\" fill=\"#ff69b4\" stroke=\"none\"/> <!-- Arms --> <rect x=\"30\" y=\"85\" width=\"30\" height=\"12\" fill=\"#f4a460\" rx=\"6\"/> <rect x=\"100\" y=\"85\" width=\"30\" height=\"12\" fill=\"#f4a460\" rx=\"6\"/> <!-- Eyes --> <circle cx=\"72\" cy=\"45\" r=\"3\" fill=\"black\"/> <circle cx=\"88\" cy=\"45\" r=\"3\" fill=\"black\"/> <!-- Smile --> <path d=\"M 75 55 Q 80 58 85 55\" stroke=\"black\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/> </svg>";
+SVG["base-curly"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Curly hair --> <circle cx=\"58\" cy=\"38\" r=\"9\" fill=\"#8b4513\"/> <circle cx=\"68\" cy=\"30\" r=\"10\" fill=\"#8b4513\"/> <circle cx=\"80\" cy=\"28\" r=\"11\" fill=\"#8b4513\"/> <circle cx=\"92\" cy=\"30\" r=\"10\" fill=\"#8b4513\"/> <circle cx=\"102\" cy=\"38\" r=\"9\" fill=\"#8b4513\"/> <!-- Head --> <circle cx=\"80\" cy=\"50\" r=\"28\" fill=\"#f4a460\"/> <!-- Body --> <rect x=\"60\" y=\"80\" width=\"40\" height=\"50\" fill=\"#5b8def\" rx=\"5\"/> <!-- Arms --> <rect x=\"30\" y=\"85\" width=\"30\" height=\"12\" fill=\"#f4a460\" rx=\"6\"/> <rect x=\"100\" y=\"85\" width=\"30\" height=\"12\" fill=\"#f4a460\" rx=\"6\"/> <!-- Eyes --> <circle cx=\"72\" cy=\"45\" r=\"3\" fill=\"black\"/> <circle cx=\"88\" cy=\"45\" r=\"3\" fill=\"black\"/> <!-- Smile --> <path d=\"M 75 55 Q 80 58 85 55\" stroke=\"black\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/> </svg>";
+SVG["base-ponytails"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Hair top --> <ellipse cx=\"80\" cy=\"40\" rx=\"30\" ry=\"24\" fill=\"#d2691e\"/> <!-- Ponytails --> <ellipse cx=\"45\" cy=\"55\" rx=\"8\" ry=\"16\" fill=\"#d2691e\"/> <ellipse cx=\"115\" cy=\"55\" rx=\"8\" ry=\"16\" fill=\"#d2691e\"/> <!-- Hair ties --> <rect x=\"40\" y=\"40\" width=\"10\" height=\"4\" fill=\"#ff69b4\" rx=\"2\"/> <rect x=\"110\" y=\"40\" width=\"10\" height=\"4\" fill=\"#ff69b4\" rx=\"2\"/> <!-- Head --> <circle cx=\"80\" cy=\"50\" r=\"28\" fill=\"#f4a460\"/> <!-- Body (yellow shirt) --> <rect x=\"60\" y=\"80\" width=\"40\" height=\"50\" fill=\"#ffd93d\" rx=\"5\"/> <!-- Arms --> <rect x=\"30\" y=\"85\" width=\"30\" height=\"12\" fill=\"#f4a460\" rx=\"6\"/> <rect x=\"100\" y=\"85\" width=\"30\" height=\"12\" fill=\"#f4a460\" rx=\"6\"/> <!-- Eyes --> <circle cx=\"72\" cy=\"45\" r=\"3\" fill=\"black\"/> <circle cx=\"88\" cy=\"45\" r=\"3\" fill=\"black\"/> <!-- Smile --> <path d=\"M 75 55 Q 80 58 85 55\" stroke=\"black\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/> </svg>";
+SVG["base-dark"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Short hair --> <path d=\"M 52 48 Q 52 22 80 22 Q 108 22 108 48 Q 80 40 52 48 Z\" fill=\"#1a1a1a\"/> <!-- Head --> <circle cx=\"80\" cy=\"50\" r=\"28\" fill=\"#8b5a2b\"/> <!-- Body (green shirt) --> <rect x=\"60\" y=\"80\" width=\"40\" height=\"50\" fill=\"#6bcb77\" rx=\"5\"/> <!-- Arms --> <rect x=\"30\" y=\"85\" width=\"30\" height=\"12\" fill=\"#8b5a2b\" rx=\"6\"/> <rect x=\"100\" y=\"85\" width=\"30\" height=\"12\" fill=\"#8b5a2b\" rx=\"6\"/> <!-- Eyes --> <circle cx=\"72\" cy=\"45\" r=\"3\" fill=\"black\"/> <circle cx=\"88\" cy=\"45\" r=\"3\" fill=\"black\"/> <!-- Smile --> <path d=\"M 75 55 Q 80 58 85 55\" stroke=\"black\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/> </svg>";
+SVG["hat-wizard"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Wizard hat cone (seated at head crown) --> <path d=\"M 70 26 L 75 8 L 88 2 L 96 24 Z\" fill=\"#4b0082\" stroke=\"black\" stroke-width=\"1\"/> <!-- Hat brim --> <ellipse cx=\"80\" cy=\"26\" rx=\"24\" ry=\"6\" fill=\"#663399\" stroke=\"black\" stroke-width=\"1\"/> <!-- Star on hat --> <text x=\"83\" y=\"18\" font-size=\"14\" fill=\"gold\" text-anchor=\"middle\">✨</text> </svg>";
+SVG["hat-party"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Party hat cone (seated at head crown) --> <path d=\"M 68 26 L 78 8 L 92 8 L 98 26 Z\" fill=\"#ff1493\" stroke=\"black\" stroke-width=\"1\"/> <!-- Decorative dots --> <circle cx=\"73\" cy=\"20\" r=\"2\" fill=\"gold\"/> <circle cx=\"83\" cy=\"16\" r=\"2\" fill=\"gold\"/> <circle cx=\"93\" cy=\"22\" r=\"2\" fill=\"gold\"/> <!-- Pom-pom on top --> <circle cx=\"85\" cy=\"8\" r=\"4\" fill=\"gold\"/> </svg>";
+SVG["hat-crown"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Crown band (seated at head crown) --> <ellipse cx=\"80\" cy=\"26\" rx=\"28\" ry=\"6\" fill=\"#ffd700\" stroke=\"gold\" stroke-width=\"2\"/> <!-- Spikes --> <path d=\"M 60 26 L 55 10 L 65 22 Z\" fill=\"#ffd700\" stroke=\"gold\" stroke-width=\"1\"/> <path d=\"M 80 26 L 80 5 L 85 22 Z\" fill=\"#ffd700\" stroke=\"gold\" stroke-width=\"1\"/> <path d=\"M 100 26 L 105 10 L 95 22 Z\" fill=\"#ffd700\" stroke=\"gold\" stroke-width=\"1\"/> <!-- Jewels --> <circle cx=\"65\" cy=\"19\" r=\"3\" fill=\"#ff1493\"/> <circle cx=\"80\" cy=\"11\" r=\"3\" fill=\"#00bfff\"/> <circle cx=\"95\" cy=\"19\" r=\"3\" fill=\"#ff1493\"/> </svg>";
+SVG["hat-cap"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Brim (pokes to the right) --> <ellipse cx=\"100\" cy=\"30\" rx=\"16\" ry=\"5\" fill=\"#c44545\" stroke=\"black\" stroke-width=\"1\"/> <!-- Cap dome --> <path d=\"M 58 26 Q 80 8 102 26 Q 80 20 58 26 Z\" fill=\"#ff6b6b\" stroke=\"black\" stroke-width=\"1\"/> <!-- Button on top --> <circle cx=\"80\" cy=\"10\" r=\"3\" fill=\"#c44545\" stroke=\"black\" stroke-width=\"0.5\"/> </svg>";
+SVG["hat-helmet"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Helmet dome (seated at head crown) --> <path d=\"M 56 28 Q 80 12 104 28 Q 80 22 56 28 Z\" fill=\"#9aa0a6\" stroke=\"black\" stroke-width=\"1\"/> <!-- Metal band --> <rect x=\"56\" y=\"26\" width=\"48\" height=\"6\" fill=\"#6b7280\" stroke=\"black\" stroke-width=\"1\" rx=\"2\"/> <!-- Left horn --> <path d=\"M 56 28 L 46 18 L 52 32 Z\" fill=\"#f5f0e0\" stroke=\"black\" stroke-width=\"1\"/> <!-- Right horn --> <path d=\"M 104 28 L 114 18 L 108 32 Z\" fill=\"#f5f0e0\" stroke=\"black\" stroke-width=\"1\"/> </svg>";
+SVG["hat-flower"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Leaf band (seated at head crown) --> <path d=\"M 54 26 Q 80 10 106 26 Q 80 20 54 26 Z\" fill=\"#6bcb77\" stroke=\"black\" stroke-width=\"1\"/> <!-- Flowers --> <circle cx=\"62\" cy=\"18\" r=\"4\" fill=\"#ff69b4\" stroke=\"black\" stroke-width=\"0.5\"/> <circle cx=\"80\" cy=\"12\" r=\"4\" fill=\"#ffd93d\" stroke=\"black\" stroke-width=\"0.5\"/> <circle cx=\"98\" cy=\"18\" r=\"4\" fill=\"#ff69b4\" stroke=\"black\" stroke-width=\"0.5\"/> <!-- Centers --> <circle cx=\"62\" cy=\"18\" r=\"1.5\" fill=\"#ffd93d\"/> <circle cx=\"80\" cy=\"12\" r=\"1.5\" fill=\"#ff6b6b\"/> <circle cx=\"98\" cy=\"18\" r=\"1.5\" fill=\"#ffd93d\"/> </svg>";
+SVG["outfit-explorer"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Vest --> <path d=\"M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z\" fill=\"#8b4513\" stroke=\"black\" stroke-width=\"1\"/> <!-- Pockets --> <rect x=\"65\" y=\"95\" width=\"12\" height=\"15\" fill=\"#a0522d\" stroke=\"black\" stroke-width=\"0.5\" rx=\"1\"/> <rect x=\"83\" y=\"95\" width=\"12\" height=\"15\" fill=\"#a0522d\" stroke=\"black\" stroke-width=\"0.5\" rx=\"1\"/> <!-- Buckle --> <rect x=\"77\" y=\"105\" width=\"6\" height=\"8\" fill=\"gold\" stroke=\"black\" stroke-width=\"0.5\"/> <!-- Straps --> <line x1=\"70\" y1=\"80\" x2=\"70\" y2=\"100\" stroke=\"#8b4513\" stroke-width=\"2\"/> <line x1=\"90\" y1=\"80\" x2=\"90\" y2=\"100\" stroke=\"#8b4513\" stroke-width=\"2\"/> </svg>";
+SVG["outfit-knight"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Armor body --> <path d=\"M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z\" fill=\"#696969\" stroke=\"black\" stroke-width=\"2\"/> <!-- Armor segments --> <line x1=\"80\" y1=\"90\" x2=\"80\" y2=\"125\" stroke=\"black\" stroke-width=\"1\" stroke-dasharray=\"2,4\"/> <!-- Shoulder pauldrons --> <circle cx=\"55\" cy=\"82\" r=\"6\" fill=\"#a9a9a9\" stroke=\"black\" stroke-width=\"1\"/> <circle cx=\"105\" cy=\"82\" r=\"6\" fill=\"#a9a9a9\" stroke=\"black\" stroke-width=\"1\"/> <!-- Center chest plate --> <rect x=\"75\" y=\"85\" width=\"10\" height=\"20\" fill=\"#a9a9a9\" stroke=\"black\" stroke-width=\"1\" rx=\"1\"/> </svg>";
+SVG["outfit-ninja"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Ninja suit --> <path d=\"M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z\" fill=\"#1a1a1a\" stroke=\"black\" stroke-width=\"1\"/> <!-- Belt --> <rect x=\"60\" y=\"100\" width=\"40\" height=\"6\" fill=\"gold\" stroke=\"black\" stroke-width=\"1\"/> <!-- Buckle --> <rect x=\"76\" y=\"99\" width=\"8\" height=\"8\" fill=\"#ff8c00\" stroke=\"black\" stroke-width=\"1\" rx=\"1\"/> <!-- Stripes (speed lines) --> <line x1=\"65\" y1=\"110\" x2=\"75\" y2=\"110\" stroke=\"red\" stroke-width=\"1\"/> <line x1=\"85\" y1=\"110\" x2=\"95\" y2=\"110\" stroke=\"red\" stroke-width=\"1\"/> </svg>";
+SVG["outfit-super"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Cape (drape at sides) --> <path d=\"M 50 82 L 38 130 L 60 130 Z\" fill=\"#ff3b3b\" stroke=\"black\" stroke-width=\"1\"/> <path d=\"M 110 82 L 122 130 L 100 130 Z\" fill=\"#ff3b3b\" stroke=\"black\" stroke-width=\"1\"/> <!-- Suit body --> <path d=\"M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z\" fill=\"#2b3a67\" stroke=\"black\" stroke-width=\"1\"/> <!-- Emblem star --> <polygon points=\"80,95 83,103 92,103 85,109 88,118 80,113 72,118 75,109 68,103 77,103\" fill=\"#ffd93d\" stroke=\"black\" stroke-width=\"0.5\"/> </svg>";
+SVG["outfit-pirate"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Shirt body --> <path d=\"M 60 80 L 55 130 Q 80 135 105 130 L 100 80 Z\" fill=\"#f5f5f5\" stroke=\"black\" stroke-width=\"1\"/> <!-- Red stripes --> <rect x=\"55\" y=\"88\" width=\"50\" height=\"5\" fill=\"#e03131\"/> <rect x=\"55\" y=\"122\" width=\"50\" height=\"5\" fill=\"#e03131\"/> <!-- Belt --> <rect x=\"55\" y=\"115\" width=\"50\" height=\"8\" fill=\"#3b2a1a\" stroke=\"black\" stroke-width=\"1\" rx=\"1\"/> <rect x=\"77\" y=\"116\" width=\"6\" height=\"6\" fill=\"#ffd93d\" stroke=\"black\" stroke-width=\"0.5\"/> </svg>";
+SVG["outfit-wizard"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Robe --> <path d=\"M 60 80 L 48 132 Q 80 138 112 132 L 100 80 Z\" fill=\"#4b0082\" stroke=\"black\" stroke-width=\"1\"/> <!-- Gold trim --> <path d=\"M 48 132 Q 80 138 112 132 L 110 128 Q 80 134 50 128 Z\" fill=\"#ffd93d\"/> <!-- Stars --> <text x=\"80\" y=\"100\" font-size=\"14\" fill=\"#ffd93d\" text-anchor=\"middle\">★</text> <text x=\"68\" y=\"118\" font-size=\"10\" fill=\"#ffd93d\" text-anchor=\"middle\">✦</text> <text x=\"92\" y=\"118\" font-size=\"10\" fill=\"#ffd93d\" text-anchor=\"middle\">✦</text> </svg>";
+SVG["weapon-sword"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Blade (held upright in the right hand) --> <path d=\"M 110 18 L 120 18 L 118 72 L 112 72 Z\" fill=\"#c0c0c0\" stroke=\"black\" stroke-width=\"1\"/> <!-- Blade edge highlight --> <line x1=\"113\" y1=\"28\" x2=\"113\" y2=\"64\" stroke=\"white\" stroke-width=\"1\" opacity=\"0.7\"/> <!-- Crossguard --> <rect x=\"102\" y=\"72\" width=\"26\" height=\"6\" fill=\"#8b4513\" stroke=\"black\" stroke-width=\"1\" rx=\"1\"/> <!-- Handle (gripped by the right hand at ~115,91) --> <rect x=\"110\" y=\"78\" width=\"10\" height=\"26\" fill=\"#d2691e\" stroke=\"black\" stroke-width=\"1\" rx=\"2\"/> <!-- Handle wrap --> <line x1=\"110\" y1=\"86\" x2=\"120\" y2=\"86\" stroke=\"gold\" stroke-width=\"1\"/> <line x1=\"110\" y1=\"94\" x2=\"120\" y2=\"94\" stroke=\"gold\" stroke-width=\"1\"/> <!-- Pommel --> <circle cx=\"115\" cy=\"106\" r=\"4\" fill=\"#8b4513\" stroke=\"black\" stroke-width=\"1\"/> </svg>";
+SVG["weapon-staff"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Staff pole (held vertically in the right hand) --> <rect x=\"110\" y=\"18\" width=\"10\" height=\"122\" fill=\"#8b4513\" stroke=\"black\" stroke-width=\"1\" rx=\"5\"/> <!-- Orb at top --> <circle cx=\"115\" cy=\"18\" r=\"10\" fill=\"#9370db\" stroke=\"black\" stroke-width=\"1\"/> <!-- Magic sparkles on orb --> <text x=\"115\" y=\"23\" font-size=\"10\" fill=\"#ff69b4\" text-anchor=\"middle\">✨</text> <!-- Runes on staff --> <text x=\"105\" y=\"80\" font-size=\"8\" fill=\"gold\">∆</text> <text x=\"115\" y=\"80\" font-size=\"8\" fill=\"gold\">◆</text> <!-- Rings/bands --> <ellipse cx=\"115\" cy=\"55\" rx=\"7\" ry=\"3\" fill=\"none\" stroke=\"gold\" stroke-width=\"1\"/> <ellipse cx=\"115\" cy=\"105\" rx=\"7\" ry=\"3\" fill=\"none\" stroke=\"gold\" stroke-width=\"1\"/> </svg>";
+SVG["weapon-bow"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Bow body (wood) --> <path d=\"M 95 50 Q 105 80 95 120\" fill=\"none\" stroke=\"#8b4513\" stroke-width=\"6\" stroke-linecap=\"round\"/> <!-- String --> <path d=\"M 95 50 Q 100 80 95 120\" fill=\"none\" stroke=\"#f5deb3\" stroke-width=\"2\" stroke-linecap=\"round\"/> <!-- Arrow --> <line x1=\"85\" y1=\"85\" x2=\"60\" y2=\"85\" stroke=\"#8b4513\" stroke-width=\"4\" stroke-linecap=\"round\"/> <!-- Arrow head --> <path d=\"M 60 85 L 65 82 L 65 88 Z\" fill=\"#c0c0c0\" stroke=\"black\" stroke-width=\"0.5\"/> <!-- Arrow fletch --> <path d=\"M 85 85 L 82 80 L 82 90 Z\" fill=\"#d2691e\" stroke=\"black\" stroke-width=\"0.5\" opacity=\"0.8\"/> </svg>";
+SVG["weapon-shield"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Shield rim --> <circle cx=\"108\" cy=\"88\" r=\"24\" fill=\"#8b4513\" stroke=\"black\" stroke-width=\"2\"/> <!-- Shield face --> <circle cx=\"108\" cy=\"88\" r=\"20\" fill=\"#a0522d\"/> <!-- Cross --> <rect x=\"106\" y=\"70\" width=\"4\" height=\"36\" fill=\"#ffd93d\"/> <rect x=\"89\" y=\"86\" width=\"38\" height=\"4\" fill=\"#ffd93d\"/> <!-- Boss --> <circle cx=\"108\" cy=\"88\" r=\"5\" fill=\"#ffd93d\" stroke=\"black\" stroke-width=\"1\"/> </svg>";
+SVG["weapon-axe"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Handle --> <rect x=\"100\" y=\"50\" width=\"6\" height=\"80\" fill=\"#8b4513\" stroke=\"black\" stroke-width=\"1\" rx=\"3\"/> <!-- Axe head --> <path d=\"M 106 50 L 130 55 L 128 75 L 106 70 Z\" fill=\"#c0c0c0\" stroke=\"black\" stroke-width=\"1\"/> <!-- Blade edge highlight --> <line x1=\"128\" y1=\"58\" x2=\"128\" y2=\"72\" stroke=\"white\" stroke-width=\"1\" opacity=\"0.7\"/> <!-- Pommel --> <circle cx=\"103\" cy=\"133\" r=\"4\" fill=\"#8b4513\" stroke=\"black\" stroke-width=\"1\"/> </svg>";
+SVG["weapon-wand"] = "<svg width=\"160\" height=\"160\" viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\"> <!-- Wand stick (held in the right hand) --> <rect x=\"112\" y=\"40\" width=\"6\" height=\"70\" fill=\"#8b4513\" stroke=\"black\" stroke-width=\"1\" rx=\"3\"/> <!-- Star tip --> <polygon points=\"115,28 118,40 128,40 120,46 123,56 115,50 107,56 110,46 102,40 112,40\" fill=\"#ffd93d\" stroke=\"black\" stroke-width=\"1\"/> <!-- Sparkle --> <text x=\"135\" y=\"42\" font-size=\"10\" fill=\"#ffd93d\">✨</text> </svg>";
+
+
+const SLOTS = ["base","outfit","weapon","hat"];
+
+function avatar(equipped, size){
+  // equipped: {base,outfit,weapon,hat}; size in px
+  const layers = [];
+  for (const slot of SLOTS){
+    let id = equipped[slot];
+    if (slot === "base" && !id) id = "base-boy";
+    if (!id) continue;
+    layers.push(id);
+  }
+  const inner = layers.map((id, i) =>
+    `<div class="layer" style="z-index:${i}">${SVG[id] || ""}</div>`).join("");
+  return `<div class="avatar" style="width:${size}px;height:${size}px">${inner}</div>`;
+}
+
+function cell(equipped, name, sizes=[160,80,40]){
+  const av = sizes.map(s => avatar(equipped, s)).join('<div style="width:2px"></div>');
+  return `<div class="cell"><div class="sizes">${av}</div><div class="label">${name}</div></div>`;
+}
+
+const bases = ["base-boy","base-girl","base-curly","base-ponytails","base-dark"];
+const hats = ["hat-wizard","hat-party","hat-crown","hat-cap","hat-helmet","hat-flower"];
+const outfits = ["outfit-explorer","outfit-knight","outfit-ninja","outfit-super","outfit-pirate","outfit-wizard"];
+const weapons = ["weapon-sword","weapon-staff","weapon-bow","weapon-shield","weapon-axe","weapon-wand"];
+
+let html = "";
+
+html += `<h2>Base bodies (lg)</h2><div class="row">`;
+for (const b of bases) html += cell({base:b}, b, [160]);
+html += `</div>`;
+
+html += `<h2>Hats on base-boy (lg / md / sm)</h2><div class="row">`;
+for (const h of hats) html += cell({base:"base-boy", hat:h}, h);
+html += `</div>`;
+
+html += `<h2>Weapons on base-boy (lg / md / sm)</h2><div class="row">`;
+for (const w of weapons) html += cell({base:"base-boy", weapon:w}, w);
+html += `</div>`;
+
+html += `<h2>Outfits on base-boy (lg)</h2><div class="row">`;
+for (const o of outfits) html += cell({base:"base-boy", outfit:o}, o, [160]);
+html += `</div>`;
+
+html += `<h2>Combos (lg / md / sm)</h2><div class="row">`;
+html += cell({base:"base-girl", outfit:"outfit-wizard", weapon:"weapon-staff", hat:"hat-wizard"}, "girl wizard+staff");
+html += cell({base:"base-curly", outfit:"outfit-knight", weapon:"weapon-sword", hat:"hat-helmet"}, "curly knight+sword");
+html += cell({base:"base-dark", outfit:"outfit-ninja", weapon:"weapon-bow", hat:"hat-crown"}, "dark ninja+bow");
+html += cell({base:"base-ponytails", outfit:"outfit-super", weapon:"weapon-shield", hat:"hat-party"}, "pony hero+shield");
+html += cell({base:"base-boy", outfit:"outfit-pirate", weapon:"weapon-axe", hat:"hat-flower"}, "boy pirate+axe");
+html += cell({base:"base-boy", outfit:"outfit-explorer", weapon:"weapon-wand", hat:"hat-cap"}, "boy explorer+wand");
+html += `</div>`;
+
+html += `<h2>Empty equipped (should show default base-boy)</h2><div class="row">`;
+html += cell({}, "empty → base-boy");
+html += `</div>`;
+
+html += `<h2>Hats on other bodies (sm = 40px)</h2><div class="row">`;
+for (const b of bases) html += cell({base:b, hat:"hat-wizard"}, b+"+wiz", [40]);
+html += `</div>`;
+
+document.getElementById("app").innerHTML = html;
+</script>
+</body>
+</html>

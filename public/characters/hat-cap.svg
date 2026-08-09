@@ -1,8 +1,8 @@
 <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
   <!-- Brim (pokes to the right) -->
-  <ellipse cx="100" cy="46" rx="16" ry="5" fill="#c44545" stroke="black" stroke-width="1"/>
+  <ellipse cx="100" cy="30" rx="16" ry="5" fill="#c44545" stroke="black" stroke-width="1"/>
   <!-- Cap dome -->
-  <path d="M 58 42 Q 80 24 102 42 Q 80 36 58 42 Z" fill="#ff6b6b" stroke="black" stroke-width="1"/>
+  <path d="M 58 26 Q 80 8 102 26 Q 80 20 58 26 Z" fill="#ff6b6b" stroke="black" stroke-width="1"/>
   <!-- Button on top -->
-  <circle cx="80" cy="26" r="3" fill="#c44545" stroke="black" stroke-width="0.5"/>
+  <circle cx="80" cy="10" r="3" fill="#c44545" stroke="black" stroke-width="0.5"/>
 </svg>

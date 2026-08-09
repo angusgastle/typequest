@@ -1,15 +1,15 @@
 <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
-  <!-- Blade -->
-  <path d="M 75 40 L 85 40 L 83 110 L 77 110 Z" fill="#c0c0c0" stroke="black" stroke-width="1"/>
+  <!-- Blade (held upright in the right hand) -->
+  <path d="M 110 18 L 120 18 L 118 72 L 112 72 Z" fill="#c0c0c0" stroke="black" stroke-width="1"/>
   <!-- Blade edge highlight -->
-  <line x1="78" y1="50" x2="78" y2="100" stroke="white" stroke-width="1" opacity="0.7"/>
+  <line x1="113" y1="28" x2="113" y2="64" stroke="white" stroke-width="1" opacity="0.7"/>
   <!-- Crossguard -->
-  <rect x="70" y="105" width="20" height="6" fill="#8b4513" stroke="black" stroke-width="1" rx="1"/>
-  <!-- Handle -->
-  <rect x="75" y="111" width="10" height="35" fill="#d2691e" stroke="black" stroke-width="1" rx="2"/>
+  <rect x="102" y="72" width="26" height="6" fill="#8b4513" stroke="black" stroke-width="1" rx="1"/>
+  <!-- Handle (gripped by the right hand at ~115,91) -->
+  <rect x="110" y="78" width="10" height="26" fill="#d2691e" stroke="black" stroke-width="1" rx="2"/>
   <!-- Handle wrap -->
-  <line x1="75" y1="120" x2="85" y2="120" stroke="gold" stroke-width="1"/>
-  <line x1="75" y1="130" x2="85" y2="130" stroke="gold" stroke-width="1"/>
+  <line x1="110" y1="86" x2="120" y2="86" stroke="gold" stroke-width="1"/>
+  <line x1="110" y1="94" x2="120" y2="94" stroke="gold" stroke-width="1"/>
   <!-- Pommel -->
-  <circle cx="80" cy="150" r="4" fill="#8b4513" stroke="black" stroke-width="1"/>
+  <circle cx="115" cy="106" r="4" fill="#8b4513" stroke="black" stroke-width="1"/>
 </svg>

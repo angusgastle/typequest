@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Avatar Mount Verification</title>
+<style>
+  :root{ color-scheme: light; }
+  body{ font-family: ui-sans-serif, system-ui, sans-serif; background:#f4f4ee; margin:0; padding:24px; }
+  h1{ font-size:20px; margin:0 0 4px; }
+  h2{ font-size:15px; margin:24px 0 8px; border-bottom:1px solid #ddd; padding-bottom:4px; }
+  .row{ display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; }
+  .cell{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .label{ font-size:11px; color:#666; text-align:center; max-width:110px; word-break:break-word; }
+  .sizes{ display:flex; gap:6px; align-items:flex-end; background:#fff; padding:8px; border-radius:12px; border:1px solid #e3e3d8;}
+  .avatar{
+    position:relative; overflow:hidden; border-radius:9999px; background:#fbf6e9;
+    display:inline-block;
+  }
+  .avatar svg, .avatar > svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .avatar .layer{ position:absolute; inset:0; width:100%; height:100%; }
+  .layer svg{ width:100%; height:100%; display:block; }
+  .notes{ background:#fff8e0; border:1px solid #e8d98a; padding:10px 14px; border-radius:8px; font-size:13px; max-width:760px; }
+</style>
+</head>
+<body>
+<h1>Character Avatar — Mount Verification</h1>
+<div class="notes">
+  Every avatar below uses the exact <code>CharacterAvatar</code> recipe: a square, <code>rounded-full</code>, <code>overflow-hidden</code> container with stacked layers at <code>object-fit: contain</code>, z-order base → outfit → weapon → hat. Weapons should sit at the right hand (~x115), hats on the head top (~y22), outfits over the torso.
+</div>
+<div id="app"></div>
+
+<script>
+const SVG = {};
+// SVGs injected below
+
+const SLOTS = ["base","outfit","weapon","hat"];
+
+function avatar(equipped, size){
+  // equipped: {base,outfit,weapon,hat}; size in px
+  const layers = [];
+  for (const slot of SLOTS){
+    let id = equipped[slot];
+    if (slot === "base" && !id) id = "base-boy";
+    if (!id) continue;
+    layers.push(id);
+  }
+  const inner = layers.map((id, i) =>
+    `<div class="layer" style="z-index:${i}">${SVG[id] || ""}</div>`).join("");
+  return `<div class="avatar" style="width:${size}px;height:${size}px">${inner}</div>`;
+}
+
+function cell(equipped, name, sizes=[160,80,40]){
+  const av = sizes.map(s => avatar(equipped, s)).join('<div style="width:2px"></div>');
+  return `<div class="cell"><div class="sizes">${av}</div><div class="label">${name}</div></div>`;
+}
+
+const bases = ["base-boy","base-girl","base-curly","base-ponytails","base-dark"];
+const hats = ["hat-wizard","hat-party","hat-crown","hat-cap","hat-helmet","hat-flower"];
+const outfits = ["outfit-explorer","outfit-knight","outfit-ninja","outfit-super","outfit-pirate","outfit-wizard"];
+const weapons = ["weapon-sword","weapon-staff","weapon-bow","weapon-shield","weapon-axe","weapon-wand"];
+
+let html = "";
+
+html += `<h2>Base bodies (lg)</h2><div class="row">`;
+for (const b of bases) html += cell({base:b}, b, [160]);
+html += `</div>`;
+
+html += `<h2>Hats on base-boy (lg / md / sm)</h2><div class="row">`;
+for (const h of hats) html += cell({base:"base-boy", hat:h}, h);
+html += `</div>`;
+
+html += `<h2>Weapons on base-boy (lg / md / sm)</h2><div class="row">`;
+for (const w of weapons) html += cell({base:"base-boy", weapon:w}, w);
+html += `</div>`;
+
+html += `<h2>Outfits on base-boy (lg)</h2><div class="row">`;
+for (const o of outfits) html += cell({base:"base-boy", outfit:o}, o, [160]);
+html += `</div>`;
+
+html += `<h2>Combos (lg / md / sm)</h2><div class="row">`;
+html += cell({base:"base-girl", outfit:"outfit-wizard", weapon:"weapon-staff", hat:"hat-wizard"}, "girl wizard+staff");
+html += cell({base:"base-curly", outfit:"outfit-knight", weapon:"weapon-sword", hat:"hat-helmet"}, "curly knight+sword");
+html += cell({base:"base-dark", outfit:"outfit-ninja", weapon:"weapon-bow", hat:"hat-crown"}, "dark ninja+bow");
+html += cell({base:"base-ponytails", outfit:"outfit-super", weapon:"weapon-shield", hat:"hat-party"}, "pony hero+shield");
+html += cell({base:"base-boy", outfit:"outfit-pirate", weapon:"weapon-axe", hat:"hat-flower"}, "boy pirate+axe");
+html += cell({base:"base-boy", outfit:"outfit-explorer", weapon:"weapon-wand", hat:"hat-cap"}, "boy explorer+wand");
+html += `</div>`;
+
+html += `<h2>Empty equipped (should show default base-boy)</h2><div class="row">`;
+html += cell({}, "empty → base-boy");
+html += `</div>`;
+
+html += `<h2>Hats on other bodies (sm = 40px)</h2><div class="row">`;
+for (const b of bases) html += cell({base:b, hat:"hat-wizard"}, b+"+wiz", [40]);
+html += `</div>`;
+
+document.getElementById("app").innerHTML = html;
+</script>
+</body>
+</html>

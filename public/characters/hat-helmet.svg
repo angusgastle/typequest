@@ -1,10 +1,10 @@
 <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
-  <!-- Helmet dome -->
-  <path d="M 56 36 Q 80 20 104 36 Q 80 30 56 36 Z" fill="#9aa0a6" stroke="black" stroke-width="1"/>
+  <!-- Helmet dome (seated at head crown) -->
+  <path d="M 56 28 Q 80 12 104 28 Q 80 22 56 28 Z" fill="#9aa0a6" stroke="black" stroke-width="1"/>
   <!-- Metal band -->
-  <rect x="56" y="34" width="48" height="6" fill="#6b7280" stroke="black" stroke-width="1" rx="2"/>
+  <rect x="56" y="26" width="48" height="6" fill="#6b7280" stroke="black" stroke-width="1" rx="2"/>
   <!-- Left horn -->
-  <path d="M 56 36 L 46 26 L 52 40 Z" fill="#f5f0e0" stroke="black" stroke-width="1"/>
+  <path d="M 56 28 L 46 18 L 52 32 Z" fill="#f5f0e0" stroke="black" stroke-width="1"/>
   <!-- Right horn -->
-  <path d="M 104 36 L 114 26 L 108 40 Z" fill="#f5f0e0" stroke="black" stroke-width="1"/>
+  <path d="M 104 28 L 114 18 L 108 32 Z" fill="#f5f0e0" stroke="black" stroke-width="1"/>
 </svg>
